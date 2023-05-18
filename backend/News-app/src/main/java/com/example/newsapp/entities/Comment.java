@@ -7,6 +7,9 @@ public class Comment {
     private Integer id;
     @NotNull(message = "author field is required")
     @NotEmpty(message = "author field is required")
+    private Integer newsId;
+    @NotNull(message = "author field is required")
+    @NotEmpty(message = "author field is required")
     private String author;
     @NotNull(message = "content field is required")
     @NotEmpty(message = "content field is required")
@@ -28,6 +31,14 @@ public class Comment {
 
     public void setId(Integer id) {
         this.id = id;
+    }
+
+    public Integer getNewsId() {
+        return newsId;
+    }
+
+    public void setNewsId(Integer newsId) {
+        this.newsId = newsId;
     }
 
     public String getAuthor() {

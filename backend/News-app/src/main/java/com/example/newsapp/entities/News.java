@@ -10,6 +10,9 @@ import java.util.Set;
 
 public class News {
     private Integer id;
+    @NotNull(message = "categoryName field is required")
+    @NotEmpty(message = "categoryName field is required")
+    private String categoryName;
     @NotNull(message = "title field is required")
     @NotEmpty(message = "title field is required")
     private String title;
@@ -22,20 +25,18 @@ public class News {
 
     private Long createdAt;
     private int visits;
-    private List<Comment> comments = new ArrayList<>();
-
     private Set<Tag> tags = new HashSet<>();
 
 
     public News() {  }
 
-    public News(String title, String content, String author, Long createdAt, int visits, Set<Tag> tags) {
+    public News(String categoryName, String title, String content, String author, Long createdAt, int visits) {
+        this.categoryName = categoryName;
         this.title = title;
         this.content = content;
         this.author = author;
         this.createdAt = createdAt;
         this.visits = visits;
-        this.tags = tags;
     }
 
     public Integer getId() {
@@ -44,6 +45,14 @@ public class News {
 
     public void setId(Integer id) {
         this.id = id;
+    }
+
+    public String getCategoryName() {
+        return categoryName;
+    }
+
+    public void setCategoryName(String categoryName) {
+        this.categoryName = categoryName;
     }
 
     public String getTitle() {
@@ -84,14 +93,6 @@ public class News {
 
     public void setVisits(int visits) {
         this.visits = visits;
-    }
-
-    public List<Comment> getComments() {
-        return comments;
-    }
-
-    public void setComments(List<Comment> comments) {
-        this.comments = comments;
     }
 
     public Set<Tag> getTags() {
