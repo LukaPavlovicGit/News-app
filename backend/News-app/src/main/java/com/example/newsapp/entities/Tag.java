@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Set;
 
 public class Tag {
-
+    private Integer id;
     @NotNull(message = "keyword field is required")
     @NotEmpty(message = "keyword field is required")
     private String keyword;
@@ -22,6 +22,14 @@ public class Tag {
     public Tag(String keyword, Set<News> news) {
         this.keyword = keyword;
         this.news = news;
+    }
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
     }
 
     public String getKeyword() {

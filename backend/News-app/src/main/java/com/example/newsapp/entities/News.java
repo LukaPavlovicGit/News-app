@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Set;
 
 public class News {
+    private Integer id;
     @NotNull(message = "title field is required")
     @NotEmpty(message = "title field is required")
     private String title;
@@ -35,6 +36,14 @@ public class News {
         this.createdAt = createdAt;
         this.visits = visits;
         this.tags = tags;
+    }
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
     }
 
     public String getTitle() {

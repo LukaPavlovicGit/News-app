@@ -5,6 +5,7 @@ import javax.validation.constraints.NotNull;
 
 
 public class Category {
+    private Integer id;
     @NotNull(message = "name field is required")
     @NotEmpty(message = "name field is required")
     private String name;

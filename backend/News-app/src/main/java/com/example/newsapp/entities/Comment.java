@@ -4,6 +4,7 @@ import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 
 public class Comment {
+    private Integer id;
     @NotNull(message = "author field is required")
     @NotEmpty(message = "author field is required")
     private String author;
@@ -13,4 +14,43 @@ public class Comment {
 
     private Long createdAt;
 
+    public Comment() {  }
+
+    public Comment(String author, String content, Long createdAt) {
+        this.author = author;
+        this.content = content;
+        this.createdAt = createdAt;
+    }
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
+    public String getAuthor() {
+        return author;
+    }
+
+    public void setAuthor(String author) {
+        this.author = author;
+    }
+
+    public String getContent() {
+        return content;
+    }
+
+    public void setContent(String content) {
+        this.content = content;
+    }
+
+    public Long getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(Long createdAt) {
+        this.createdAt = createdAt;
+    }
 }

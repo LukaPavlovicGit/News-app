@@ -4,6 +4,7 @@ import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 
 public class User {
+    private Integer id;
     private int privilege;
     @NotNull(message = "firstname field is required")
     @NotEmpty(message = "firstname field is required")
@@ -28,6 +29,14 @@ public class User {
         this.email = email;
         this.hashedPassword = hashedPassword;
         this.status = status;
+    }
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
     }
 
     public int getPrivilege() {
