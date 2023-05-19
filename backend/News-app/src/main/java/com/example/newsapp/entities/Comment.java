@@ -25,6 +25,14 @@ public class Comment {
         this.createdAt = createdAt;
     }
 
+    public Comment(Integer id, Integer newsId, String author, String content, Long createdAt) {
+        this.id = id;
+        this.newsId = newsId;
+        this.author = author;
+        this.content = content;
+        this.createdAt = createdAt;
+    }
+
     public Integer getId() {
         return id;
     }

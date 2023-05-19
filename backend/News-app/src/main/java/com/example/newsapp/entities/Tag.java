@@ -24,6 +24,11 @@ public class Tag {
         this.news = news;
     }
 
+    public Tag(Integer id, String keyword) {
+        this.id = id;
+        this.keyword = keyword;
+    }
+
     public Integer getId() {
         return id;
     }

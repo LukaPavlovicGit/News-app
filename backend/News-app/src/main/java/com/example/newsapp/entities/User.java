@@ -5,7 +5,7 @@ import javax.validation.constraints.NotNull;
 
 public class User {
     private Integer id;
-    private int privilege;
+    private String role;
     @NotNull(message = "firstname field is required")
     @NotEmpty(message = "firstname field is required")
     private String firstname;
@@ -20,10 +20,10 @@ public class User {
     private String hashedPassword;
     private boolean status;
 
-    public User() { }
+    public User() {  }
 
-    public User(int privilege, String firstname, String lastname, String email, String hashedPassword, boolean status) {
-        this.privilege = privilege;
+    public User(String role, String firstname, String lastname, String email, String hashedPassword, boolean status) {
+        this.role = role;
         this.firstname = firstname;
         this.lastname = lastname;
         this.email = email;
@@ -39,12 +39,12 @@ public class User {
         this.id = id;
     }
 
-    public int getPrivilege() {
-        return privilege;
+    public String getRole() {
+        return role;
     }
 
-    public void setPrivilege(int privilege) {
-        this.privilege = privilege;
+    public void setRole(String role) {
+        this.role = role;
     }
 
     public String getFirstname() {
@@ -80,6 +80,11 @@ public class User {
     }
 
     public boolean isStatus() {
+        return status;
+    }
+
+
+    public boolean getStatus() {
         return status;
     }
 

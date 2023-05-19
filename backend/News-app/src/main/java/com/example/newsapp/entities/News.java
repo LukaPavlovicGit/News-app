@@ -39,6 +39,27 @@ public class News {
         this.visits = visits;
     }
 
+    public News(Integer id, String categoryName, String title, String content, String author, Long createdAt, int visits) {
+        this.id = id;
+        this.categoryName = categoryName;
+        this.title = title;
+        this.content = content;
+        this.author = author;
+        this.createdAt = createdAt;
+        this.visits = visits;
+    }
+
+    public News(Integer id, String categoryName, String title, String content, String author, Long createdAt, int visits, Set<Tag> tags) {
+        this.id = id;
+        this.categoryName = categoryName;
+        this.title = title;
+        this.content = content;
+        this.author = author;
+        this.createdAt = createdAt;
+        this.visits = visits;
+        this.tags = tags;
+    }
+
     public Integer getId() {
         return id;
     }
