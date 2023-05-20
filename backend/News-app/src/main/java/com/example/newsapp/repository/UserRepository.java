@@ -4,7 +4,7 @@ import com.example.newsapp.entities.User;
 
 public interface UserRepository {
 
-    User insert(User user);
+    Boolean insert(User user);
     User update(User user);
     User findByEmail(String email);
 }

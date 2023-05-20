@@ -13,7 +13,8 @@ import java.sql.SQLException;
 
 public class UserRepositoryImpl extends MySqlAbstractRepository implements UserRepository {
     @Override
-    public User insert(User user) {
+    public Boolean insert(User user) {
+        boolean success = false;
         Connection connection = null;
         PreparedStatement preparedStatement = null;
         ResultSet resultSet = null;
@@ -32,7 +33,7 @@ public class UserRepositoryImpl extends MySqlAbstractRepository implements UserR
             resultSet = preparedStatement.getGeneratedKeys();
 
             if(resultSet.next()){
-                user.setId(resultSet.getInt(1));
+                success = true;
             }
 
         } catch (SQLException e) {
@@ -43,7 +44,7 @@ public class UserRepositoryImpl extends MySqlAbstractRepository implements UserR
             this.closeResultSet(resultSet);
         }
 
-        return user;
+        return success;
     }
 
     @Override

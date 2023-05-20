@@ -20,7 +20,9 @@ public class User {
     private String hashedPassword;
     private boolean status;
 
-    public User() {  }
+    public User() {
+        status = false;
+    }
 
     public User(String role, String firstname, String lastname, String email, String hashedPassword, boolean status) {
         this.role = role;

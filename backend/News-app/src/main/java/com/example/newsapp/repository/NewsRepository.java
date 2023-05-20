@@ -11,5 +11,4 @@ public interface NewsRepository {
     List<News> findAll();
     List<News> findAllCategory(String categoryName);
 
-
 }
