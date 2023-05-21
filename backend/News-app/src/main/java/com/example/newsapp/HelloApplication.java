@@ -2,6 +2,7 @@ package com.example.newsapp;
 
 import com.example.newsapp.repository.*;
 import com.example.newsapp.repository.impl.*;
+import com.example.newsapp.service.*;
 import org.glassfish.jersey.internal.inject.AbstractBinder;
 import org.glassfish.jersey.server.ResourceConfig;
 import org.glassfish.jersey.server.ServerProperties;
@@ -21,17 +22,19 @@ public class HelloApplication extends ResourceConfig {
         AbstractBinder binder = new AbstractBinder() {
             @Override
             protected void configure() {
-                // MySql
-                this.bind(CategoryRepositoryImpl.class).to(CategoryRepository.class).in(Singleton.class);
-                this.bind(CommentRepositoryImpl.class).to(CommentRepository.class).in(Singleton.class);
-                this.bind(NewsRepositoryImpl.class).to(NewsRepository.class).in(Singleton.class);
-                this.bind(NewsTagRepositoryImpl.class).to(NewsTagRepository.class).in(Singleton.class);
-                this.bind(TagRepositoryImpl.class).to(TagRepository.class).in(Singleton.class);
-                this.bind(UserRepositoryImpl.class).to(UserRepository.class).in(Singleton.class);
+            // MySql
+            this.bind(CategoryRepositoryImpl.class).to(CategoryRepository.class).in(Singleton.class);
+            this.bind(CommentRepositoryImpl.class).to(CommentRepository.class).in(Singleton.class);
+            this.bind(NewsRepositoryImpl.class).to(NewsRepository.class).in(Singleton.class);
+            this.bind(NewsTagRepositoryImpl.class).to(NewsTagRepository.class).in(Singleton.class);
+            this.bind(TagRepositoryImpl.class).to(TagRepository.class).in(Singleton.class);
+            this.bind(UserRepositoryImpl.class).to(UserRepository.class).in(Singleton.class);
 
-//            this.bindAsContract(PostService.class);
-//            this.bindAsContract(CommentService.class);
-//            this.bindAsContract(UserService.class);
+            this.bindAsContract(CategoryService.class);
+            this.bindAsContract(CommentService.class);
+            this.bindAsContract(NewsService.class);
+            this.bindAsContract(TagService.class);
+            this.bindAsContract(UserService.class);
 
             }
         };

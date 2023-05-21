@@ -12,4 +12,5 @@ public class CommentService {
 
     public Comment insert(Comment comment) { return commentRepository.insert(comment); }
     public List<Comment> findAllByNewsId(Integer newsId) { return commentRepository.findByNewsId(newsId); }
+
 }
