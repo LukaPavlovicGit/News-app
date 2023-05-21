@@ -10,6 +10,7 @@ import org.apache.commons.codec.digest.DigestUtils;
 
 import javax.inject.Inject;
 import java.util.Date;
+import java.util.List;
 import java.util.Objects;
 
 public class UserService {
@@ -42,15 +43,28 @@ public class UserService {
                 .sign(algorithm);
     }
 
-    public Boolean register(String firstname, String lastname, String email, String password){
+    public User register(String role, String firstname, String lastname, String email, String password){
         User user = new User();
         user.setFirstname(firstname);
         user.setLastname(lastname);
-        user.setRole("USER_ROLE");
+        user.setRole(role);
         user.setEmail(email);
         user.setHashedPassword(DigestUtils.sha256Hex(password));
         return userRepository.insert(user);
     }
+
+    public User update(Integer id, String role, String firstname, String lastname, String email, String password){
+        User user = new User();
+        user.setRole(role);
+        user.setFirstname(firstname);
+        user.setLastname(lastname);
+        user.setRole(role);
+        user.setEmail(email);
+        user.setHashedPassword(DigestUtils.sha256Hex(password));
+        return userRepository.update(user);
+    }
+
+    public List<User> getAll(){ return userRepository.getAll(); }
 
     public boolean isLowAuthorized(String token){
         Algorithm algorithm = Algorithm.HMAC256("secret");

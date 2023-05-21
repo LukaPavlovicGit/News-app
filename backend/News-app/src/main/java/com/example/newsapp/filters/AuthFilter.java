@@ -1,5 +1,6 @@
 package com.example.newsapp.filters;
 
+import com.example.newsapp.resource.*;
 import com.example.newsapp.service.UserService;
 
 import javax.inject.Inject;
@@ -8,6 +9,7 @@ import javax.ws.rs.container.ContainerRequestFilter;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.ext.Provider;
 import java.io.IOException;
+import java.util.List;
 
 @Provider
 public class AuthFilter implements ContainerRequestFilter {
@@ -48,15 +50,16 @@ public class AuthFilter implements ContainerRequestFilter {
             return false;
         }
 
-//        List<Object> matchedResources = req.getUriInfo().getMatchedResources();
-//        for (Object matchedResource : matchedResources) {
-//            if (matchedResource instanceof PostResource) {
-//                return true;
-//            }
-//            if (matchedResource instanceof CommentResource) {
-//                return true;
-//            }
-//        }
+        List<Object> matchedResources = req.getUriInfo().getMatchedResources();
+        for (Object matchedResource : matchedResources) {
+            if (    matchedResource instanceof CategoryResource ||
+                    matchedResource instanceof CommentResource ||
+                    matchedResource instanceof NewsResource ||
+                    matchedResource instanceof TagResource ||
+                    matchedResource instanceof UserResource     ){
+                return true;
+            }
+        }
 
         return false;
     }

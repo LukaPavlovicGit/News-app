@@ -1,17 +1,23 @@
 package com.example.newsapp.repository.impl;
 
-import com.example.newsapp.entities.Category;
-import com.example.newsapp.entities.Comment;
-import com.example.newsapp.entities.News;
+import com.example.newsapp.entities.*;
 import com.example.newsapp.repository.CategoryRepository;
 import com.example.newsapp.repository.NewsRepository;
+import com.example.newsapp.repository.NewsTagRepository;
+import com.example.newsapp.repository.TagRepository;
 import com.example.newsapp.repository.mysqlAbstract.MySqlAbstractRepository;
 
+import javax.inject.Inject;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
 public class NewsRepositoryImpl extends MySqlAbstractRepository implements NewsRepository {
+
+    @Inject
+    private TagRepository tagRepository;
+    @Inject
+    private NewsTagRepository newsTagRepository;
 
     @Override
     public News insert(News news) {
@@ -34,6 +40,10 @@ public class NewsRepositoryImpl extends MySqlAbstractRepository implements NewsR
 
             if(resultSet.next()){
                 news.setId(resultSet.getInt(1));
+                for(Tag tag : news.getTags()){
+                    tag = tagRepository.insert(tag);
+                    newsTagRepository.insert(new NewsTag(news.getId(), tag.getId()));
+                }
             }
 
         } catch (SQLException e) {
@@ -45,6 +55,11 @@ public class NewsRepositoryImpl extends MySqlAbstractRepository implements NewsR
         }
 
         return news;
+    }
+
+    @Override
+    public News delete(Integer id) {
+        return null;
     }
 
     @Override
@@ -68,7 +83,6 @@ public class NewsRepositoryImpl extends MySqlAbstractRepository implements NewsR
                 news.setAuthor(resultSet.getString("author"));
                 news.setCreatedAt(resultSet.getLong("createdAt"));
                 news.setVisits(resultSet.getInt("visits"));
-
             }
 
         } catch (Exception e){

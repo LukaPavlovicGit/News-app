@@ -22,6 +22,7 @@ public class User {
 
     public User() {
         status = false;
+        role = "content_creator";
     }
 
     public User(String role, String firstname, String lastname, String email, String hashedPassword, boolean status) {
@@ -30,6 +31,15 @@ public class User {
         this.lastname = lastname;
         this.email = email;
         this.hashedPassword = hashedPassword;
+        this.status = status;
+    }
+
+    public User(Integer id, String role, String firstname, String lastname, String email, boolean status) {
+        this.id = id;
+        this.role = role;
+        this.firstname = firstname;
+        this.lastname = lastname;
+        this.email = email;
         this.status = status;
     }
 

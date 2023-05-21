@@ -7,7 +7,7 @@ import javax.inject.Inject;
 import javax.validation.Valid;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
-
+@Path("/comments")
 public class CategoryResource {
 
     @Inject

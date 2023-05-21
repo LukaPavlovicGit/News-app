@@ -1,20 +1,19 @@
 package com.example.newsapp.repository.impl;
 
 import com.example.newsapp.entities.Category;
+import com.example.newsapp.entities.Tag;
 import com.example.newsapp.entities.User;
 import com.example.newsapp.repository.CategoryRepository;
 import com.example.newsapp.repository.UserRepository;
 import com.example.newsapp.repository.mysqlAbstract.MySqlAbstractRepository;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class UserRepositoryImpl extends MySqlAbstractRepository implements UserRepository {
     @Override
-    public Boolean insert(User user) {
-        boolean success = false;
+    public User insert(User user) {
         Connection connection = null;
         PreparedStatement preparedStatement = null;
         ResultSet resultSet = null;
@@ -33,7 +32,7 @@ public class UserRepositoryImpl extends MySqlAbstractRepository implements UserR
             resultSet = preparedStatement.getGeneratedKeys();
 
             if(resultSet.next()){
-                success = true;
+                user.setId(resultSet.getInt(1));
             }
 
         } catch (SQLException e) {
@@ -44,7 +43,7 @@ public class UserRepositoryImpl extends MySqlAbstractRepository implements UserR
             this.closeResultSet(resultSet);
         }
 
-        return success;
+        return user.getId() != null ? user : null;
     }
 
     @Override
@@ -91,6 +90,39 @@ public class UserRepositoryImpl extends MySqlAbstractRepository implements UserR
         }
 
         return user;
+    }
+
+    @Override
+    public List<User> getAll(){
+        List<User> users = new ArrayList<>();
+        Connection connection = null;
+        Statement statement = null;
+        ResultSet resultSet = null;
+
+        try {
+            connection = this.newConnection();
+            statement = connection.createStatement();
+            resultSet = statement.executeQuery("SELECT * FROM users");
+            while(resultSet.next()){
+                users.add(new User(
+                        resultSet.getInt("id"),
+                        resultSet.getString("role"),
+                        resultSet.getString("firstname"),
+                        resultSet.getString("lastname"),
+                        resultSet.getString("email"),
+                        resultSet.getBoolean("status")
+                ));
+            }
+
+        } catch (Exception e){
+            e.printStackTrace();
+        } finally {
+            this.closeStatement(statement);
+            this.closeResultSet(resultSet);
+            this.closeConnection(connection);
+        }
+
+        return users;
     }
 
     @Override

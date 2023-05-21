@@ -8,6 +8,11 @@ public class NewsTag {
 
     public NewsTag() {  }
 
+    public NewsTag(Integer newsId, Integer tagId) {
+        this.newsId = newsId;
+        this.tagId = tagId;
+    }
+
     public NewsTag(Integer id, Integer newsId, Integer tagId) {
         this.id = id;
         this.newsId = newsId;
