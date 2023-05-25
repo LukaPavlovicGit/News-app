@@ -41,7 +41,7 @@ public class HelloApplication extends ResourceConfig {
 
         register(binder);
         // Ucitavamo resurse
-        packages("com.example.newsapp.resources");
+        packages("com.example.newsapp.resource");
     }
 
 

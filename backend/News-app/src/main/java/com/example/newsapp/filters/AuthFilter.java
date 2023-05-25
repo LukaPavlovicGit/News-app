@@ -15,7 +15,7 @@ import java.util.List;
 public class AuthFilter implements ContainerRequestFilter {
 
     @Inject
-    private UserService userService;
+    UserService userService;
 
     @Override
     public void filter(ContainerRequestContext requestContext) throws IOException {

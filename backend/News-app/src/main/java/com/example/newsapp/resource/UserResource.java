@@ -49,18 +49,12 @@ public class UserResource {
         String firstname = registerRequest.getFirstname();
         String lastname = registerRequest.getLastname();
         String password = registerRequest.getPassword();
-        User user = userService.register(registerRequest.getRole(), email, firstname, lastname, password);
+        User user = userService.register(registerRequest.getRole(), firstname, lastname, email, password);
         if(user == null){
             response.put("error", "A username is already used...");
             return Response.status(406, "Not acceptable").entity(response).build();
         }
-        response.put("message", "Registration Successful");
-        response.put("id", user.getId());
-        response.put("role", user.getRole());
-        response.put("email", user.getEmail());
-        response.put("firstname", user.getFirstname());
-        response.put("lastname", user.getLastname());
-        response.put("status", user.getStatus());
+        response.put("message", "User registration Successful");
         return Response.ok(response).build();
     }
 
@@ -80,18 +74,11 @@ public class UserResource {
             response.put("error", "A username is already used...");
             return Response.status(406, "Not acceptable").entity(response).build();
         }
-        response.put("message", "Registration Successful");
-        response.put("id", user.getId());
-        response.put("role", user.getRole());
-        response.put("email", user.getEmail());
-        response.put("firstname", user.getFirstname());
-        response.put("lastname", user.getLastname());
-        response.put("status", user.getStatus());
+        response.put("message", "User update Successful");
         return Response.ok(response).build();
     }
 
     @GET
-    @Path("")
     @Produces(MediaType.APPLICATION_JSON)
     public List<User> getAll(){ return userService.getAll(); }
 }

@@ -40,10 +40,21 @@ public class NewsRepositoryImpl extends MySqlAbstractRepository implements NewsR
 
             if(resultSet.next()){
                 news.setId(resultSet.getInt(1));
-                for(Tag tag : news.getTags()){
-                    tag = tagRepository.insert(tag);
-                    newsTagRepository.insert(new NewsTag(news.getId(), tag.getId()));
+
+                if(news.getTags() != null && !news.getTags().isEmpty()){
+//                    for(Tag tag : news.getTags()){
+//
+//                        tag = tagRepository.findByKeyword(tag.getKeyword());
+//                        if(tag == null){
+//                            tag = tagRepository.insert(tag);
+//                        }
+//
+//                        newsTagRepository.insert(new NewsTag(news.getId(), tag.getId()));
+//                    }
+
                 }
+
+
             }
 
         } catch (SQLException e) {

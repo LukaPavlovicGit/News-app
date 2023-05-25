@@ -21,7 +21,7 @@ public class UserRepositoryImpl extends MySqlAbstractRepository implements UserR
             connection = this.newConnection();
             String[] generatedColumns = {"id"};
 
-            preparedStatement = connection.prepareStatement("INSERT INTO users (role, firstname, lastname, email, hashedPassword, status) VALUES(?, ?, ?, ?, ?, ?)", generatedColumns);
+            preparedStatement = connection.prepareStatement("INSERT INTO users (role, firstname, lastname, email, hashed_password, status) VALUES(?, ?, ?, ?, ?, ?)", generatedColumns);
             preparedStatement.setString(1, user.getRole());
             preparedStatement.setString(2, user.getFirstname());
             preparedStatement.setString(3, user.getLastname());
@@ -36,6 +36,7 @@ public class UserRepositoryImpl extends MySqlAbstractRepository implements UserR
             }
 
         } catch (SQLException e) {
+            System.out.println("EXCEPTION: " +  e.getClass());
             e.printStackTrace();
         } finally {
             this.closeStatement(preparedStatement);
@@ -127,7 +128,7 @@ public class UserRepositoryImpl extends MySqlAbstractRepository implements UserR
 
     @Override
     public User findByEmail(String email) {
-        User user = new User();
+        User user = null;
         Connection connection = null;
         PreparedStatement preparedStatement = null;
         ResultSet resultSet = null;
@@ -139,6 +140,7 @@ public class UserRepositoryImpl extends MySqlAbstractRepository implements UserR
             resultSet = preparedStatement.executeQuery();
 
             if(resultSet.next()){
+                user = new User();
                 user.setId(resultSet.getInt("id"));
                 user.setRole(resultSet.getString("role"));
                 user.setFirstname(resultSet.getString("firstname"));

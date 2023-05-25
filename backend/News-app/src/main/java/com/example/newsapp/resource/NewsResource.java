@@ -27,9 +27,9 @@ public class NewsResource {
     @Produces(MediaType.APPLICATION_JSON)
     public List<News> findAll(){ return newsService.findAll(); }
 
-    @GET
-    @Path("/{name}")
-    @Produces(MediaType.APPLICATION_JSON)
-    public List<News> findAllByCategory(@PathParam("name") String categoryName){ return newsService.findAllByCategory(categoryName); }
+//    @GET
+//    @Path("/{name}")
+//    @Produces(MediaType.APPLICATION_JSON)
+//    public List<News> findAllByCategory(@PathParam("name") String categoryName){ return newsService.findAllByCategory(categoryName); }
 
 }

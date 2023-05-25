@@ -24,7 +24,7 @@ public class News {
 
     private Long createdAt;
     private int visits;
-    private Set<Tag> tags = new HashSet<>();
+    private String tags;
 
 
     public News() {  }
@@ -48,7 +48,7 @@ public class News {
         this.visits = visits;
     }
 
-    public News(Integer id, String categoryName, String title, String content, String author, Long createdAt, int visits, Set<Tag> tags) {
+    public News(Integer id, String categoryName, String title, String content, String author, Long createdAt, int visits, String tags) {
         this.id = id;
         this.categoryName = categoryName;
         this.title = title;
@@ -115,11 +115,11 @@ public class News {
         this.visits = visits;
     }
 
-    public Set<Tag> getTags() {
+    public String getTags() {
         return tags;
     }
 
-    public void setTags(Set<Tag> tags) {
+    public void setTags(String tags) {
         this.tags = tags;
     }
 }
