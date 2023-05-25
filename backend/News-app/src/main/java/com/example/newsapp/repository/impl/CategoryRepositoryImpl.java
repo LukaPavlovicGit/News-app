@@ -70,13 +70,14 @@ public class CategoryRepositoryImpl extends MySqlAbstractRepository implements C
             this.closeResultSet(resultSet);
         }
 
-        return category;
+        return category.getId() == null ? null : category;
     }
 
     @Override
     public Category update(Category category) {
         Connection connection = null;
         PreparedStatement preparedStatement = null;
+        ResultSet resultSet = null;
 
         int idx = 1;
         Map<String, Integer> indexes = new HashMap<>();
@@ -111,20 +112,25 @@ public class CategoryRepositoryImpl extends MySqlAbstractRepository implements C
             preparedStatement.setInt(indexes.get("id"), category.getId());
 
             preparedStatement.executeUpdate();
-            preparedStatement.getGeneratedKeys();
+            resultSet = preparedStatement.getGeneratedKeys();
+            if(resultSet.next() == false){
+                category = null;
+            }
 
         } catch (SQLException e) {
             e.printStackTrace();
         } finally {
             this.closeStatement(preparedStatement);
             this.closeConnection(connection);
+            this.closeResultSet(resultSet);
         }
 
-        return null;
+        return category;
     }
 
     @Override
     public Category delete(Integer id) {
+        Category category = null;
         Connection connection = null;
         PreparedStatement preparedStatement = null;
         ResultSet resultSet = null;
@@ -142,9 +148,17 @@ public class CategoryRepositoryImpl extends MySqlAbstractRepository implements C
                 throw new Exception();
 
             closeStatement(preparedStatement);
-            preparedStatement = connection.prepareStatement("DELETE FROM categories WHERE id = ?");
+            String[] generatedColumns = {"id", "name", "description"};
+            preparedStatement = connection.prepareStatement("DELETE FROM categories WHERE id = ?", generatedColumns);
             preparedStatement.setInt(1, id);
-            preparedStatement.executeUpdate();
+            resultSet = preparedStatement.executeQuery();
+            if(resultSet.next()){
+                category = new Category(
+                        resultSet.getInt("id"),
+                        resultSet.getString("name"),
+                        resultSet.getString("description")
+                );
+            }
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -154,7 +168,7 @@ public class CategoryRepositoryImpl extends MySqlAbstractRepository implements C
             this.closeConnection(connection);
         }
 
-        return null;
+        return category;
     }
 
 //    public Category findByName(String name) {

@@ -11,6 +11,8 @@ public class CommentService {
     private CommentRepository commentRepository;
 
     public Comment insert(Comment comment) { return commentRepository.insert(comment); }
+    public Comment update(Comment comment) { return commentRepository.update(comment); }
+    public Comment delete(Integer id) { return commentRepository.delete(id); }
     public List<Comment> findAllByNewsId(Integer newsId) { return commentRepository.findByNewsId(newsId); }
 
 }

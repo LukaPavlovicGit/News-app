@@ -18,6 +18,22 @@ public class CommentResource {
     @Produces(MediaType.APPLICATION_JSON)
     public Comment create(@Valid Comment comment){ return commentService.insert(comment); }
 
+    @PUT
+    @Path("/{id}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Comment update(@PathParam("id") Integer id, Comment comment){
+        comment.setId(id);
+        return null;
+    }
+
+    @DELETE
+    @Path("/{id}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Comment delete(@PathParam("id") Integer id, Comment comment){
+        comment.setId(id);
+        return null;
+    }
+
     @GET
     @Path("/{newsId}")
     @Produces(MediaType.APPLICATION_JSON)
