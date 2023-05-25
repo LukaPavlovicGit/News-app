@@ -1,23 +1,50 @@
 package com.example.newsapp.repository.impl;
 
 import com.example.newsapp.entities.Category;
+import com.example.newsapp.entities.User;
 import com.example.newsapp.repository.CategoryRepository;
 import com.example.newsapp.repository.mysqlAbstract.MySqlAbstractRepository;
+import com.example.newsapp.utility.Utility;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class CategoryRepositoryImpl extends MySqlAbstractRepository implements CategoryRepository {
 
     @Override
-    public Category insert(Category category) {
+    public List<Category> getAll() {
+        List<Category> categories = new ArrayList<>();
+        Connection connection = null;
+        Statement statement = null;
+        ResultSet resultSet = null;
 
-        if(findByName(category.getName()) != null){
-            return null;
+        try {
+            connection = this.newConnection();
+            statement = connection.createStatement();
+            resultSet = statement.executeQuery("SELECT * FROM categories");
+            while(resultSet.next()){
+                categories.add(new Category(
+                        resultSet.getInt("id"),
+                        resultSet.getString("name"),
+                        resultSet.getString("description")
+                ));
+            }
+        } catch (Exception e){
+            e.printStackTrace();
+        } finally {
+            this.closeStatement(statement);
+            this.closeResultSet(resultSet);
+            this.closeConnection(connection);
         }
 
+        return categories;
+    }
+
+    @Override
+    public Category insert(Category category) {
         Connection connection = null;
         PreparedStatement preparedStatement = null;
         ResultSet resultSet = null;
@@ -47,25 +74,79 @@ public class CategoryRepositoryImpl extends MySqlAbstractRepository implements C
     }
 
     @Override
-    public Category findByName(String name) {
-        Category category = new Category();
+    public Category update(Category category) {
+        Connection connection = null;
+        PreparedStatement preparedStatement = null;
+
+        int idx = 1;
+        Map<String, Integer> indexes = new HashMap<>();
+        StringBuilder sb = new StringBuilder("UPDATE categories SET ");
+        if(Utility.notNullAndEmpty(category.getName())) {
+            sb.append(" name=?,");
+            indexes.put("name", idx++);
+        }
+        if(Utility.notNullAndEmpty(category.getDescription())) {
+            sb.append(" description=?,");
+            indexes.put("description", idx++);
+        }
+        // Delete last comma sign
+        sb.deleteCharAt(sb.length() - 1);
+        sb.append(" WHERE id=?");
+
+        indexes.put("id", idx++);
+
+        try {
+            if (sb.toString().equals("UPDATE categories SET WHERE id=?")) {
+                throw new SQLException("Nothing to update...");
+            }
+
+            connection = this.newConnection();
+            String[] generatedColumns = {"id"};
+
+            System.out.println("QUERY: " + sb);
+            preparedStatement = connection.prepareStatement(sb.toString(), generatedColumns);
+
+            if(sb.toString().contains("name=?")) { preparedStatement.setString(indexes.get("name"), category.getName()); }
+            if(sb.toString().contains("description=?")) { preparedStatement.setString(indexes.get("description"), category.getDescription()); }
+            preparedStatement.setInt(indexes.get("id"), category.getId());
+
+            preparedStatement.executeUpdate();
+            preparedStatement.getGeneratedKeys();
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            this.closeStatement(preparedStatement);
+            this.closeConnection(connection);
+        }
+
+        return null;
+    }
+
+    @Override
+    public Category delete(Integer id) {
         Connection connection = null;
         PreparedStatement preparedStatement = null;
         ResultSet resultSet = null;
 
         try {
             connection = this.newConnection();
-            preparedStatement = connection.prepareStatement("SELECT * FROM categories WHERE name = ?");
-            preparedStatement.setString(1, name);
+            preparedStatement = connection.prepareStatement("SELECT COUNT(*) AS total FROM news WHERE category_name = (SELECT name FROM categories WHERE id=?)");
+            preparedStatement.setInt(1, id);
             resultSet = preparedStatement.executeQuery();
 
-            if(resultSet.next()){
-                category.setId(resultSet.getInt("id"));
-                category.setName(resultSet.getString("name"));
-                category.setDescription(resultSet.getString("description"));
-            }
+            resultSet.next();
+            int count = resultSet.getInt("total");
+            System.out.println("COUNT: " + count);
+            if (count > 0)
+                throw new Exception();
 
-        } catch (Exception e){
+            closeStatement(preparedStatement);
+            preparedStatement = connection.prepareStatement("DELETE FROM categories WHERE id = ?");
+            preparedStatement.setInt(1, id);
+            preparedStatement.executeUpdate();
+
+        } catch (Exception e) {
             e.printStackTrace();
         } finally {
             this.closeStatement(preparedStatement);
@@ -73,6 +154,35 @@ public class CategoryRepositoryImpl extends MySqlAbstractRepository implements C
             this.closeConnection(connection);
         }
 
-        return category;
+        return null;
     }
+
+//    public Category findByName(String name) {
+//        Category category = new Category();
+//        Connection connection = null;
+//        PreparedStatement preparedStatement = null;
+//        ResultSet resultSet = null;
+//
+//        try {
+//            connection = this.newConnection();
+//            preparedStatement = connection.prepareStatement("SELECT * FROM categories WHERE name = ?");
+//            preparedStatement.setString(1, name);
+//            resultSet = preparedStatement.executeQuery();
+//
+//            if(resultSet.next()){
+//                category.setId(resultSet.getInt("id"));
+//                category.setName(resultSet.getString("name"));
+//                category.setDescription(resultSet.getString("description"));
+//            }
+//
+//        } catch (Exception e){
+//            e.printStackTrace();
+//        } finally {
+//            this.closeStatement(preparedStatement);
+//            this.closeResultSet(resultSet);
+//            this.closeConnection(connection);
+//        }
+//
+//        return category;
+//    }
 }

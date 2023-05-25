@@ -54,9 +54,8 @@ public class UserRepositoryImpl extends MySqlAbstractRepository implements UserR
     public User update(User user) {
         Connection connection = null;
         PreparedStatement preparedStatement = null;
-        ResultSet resultSet = null;
 
-        Integer idx = 1;
+        int idx = 1;
         Map<String, Integer> indexes = new HashMap<>();
         StringBuilder sb = new StringBuilder("UPDATE users SET ");
         if(Utility.notNullAndEmpty(user.getRole())) {
@@ -89,18 +88,15 @@ public class UserRepositoryImpl extends MySqlAbstractRepository implements UserR
         sb.append(" WHERE id=?");
 
         indexes.put("id", idx++);
-
         try {
             if(sb.toString().equals( "UPDATE users SET WHERE id=?")){
                 throw new SQLException("Nothing to update...");
             }
 
             connection = this.newConnection();
-            String[] generatedColumns = {"id"};
-
 
             System.out.println("QUERY: " + sb);
-            preparedStatement = connection.prepareStatement(sb.toString(), generatedColumns);
+            preparedStatement = connection.prepareStatement(sb.toString());
 
             if(sb.toString().contains("role=?")) { preparedStatement.setString(indexes.get("role"), user.getRole()); }
             if(sb.toString().contains("firstname=?")) { preparedStatement.setString(indexes.get("firstname"), user.getFirstname()); }
@@ -111,18 +107,13 @@ public class UserRepositoryImpl extends MySqlAbstractRepository implements UserR
             preparedStatement.setInt(indexes.get("id"), user.getId());
 
             preparedStatement.executeUpdate();
-            resultSet = preparedStatement.getGeneratedKeys();
-
-            if(resultSet.next()){
-                user.setId(resultSet.getInt(1));
-            }
+            preparedStatement.getGeneratedKeys();
 
         } catch (SQLException e) {
             e.printStackTrace();
         } finally {
             this.closeStatement(preparedStatement);
             this.closeConnection(connection);
-            this.closeResultSet(resultSet);
         }
 
         return user;

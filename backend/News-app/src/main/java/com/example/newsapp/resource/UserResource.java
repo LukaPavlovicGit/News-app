@@ -59,9 +59,9 @@ public class UserResource {
     }
 
     @PUT
-    @Path("/admin/update/{userId}")
+    @Path("/admin/update/{id}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response update(@PathParam("userId") int userId, @Valid UpdateUserRequest updateUserRequest){
+    public Response update(@PathParam("id") int userId, @Valid UpdateUserRequest updateUserRequest){
         Map<String, Object> response = new HashMap<>();
         Integer id = userId;
         String role = updateUserRequest.getRole();
@@ -79,14 +79,14 @@ public class UserResource {
         return Response.ok(response).build();
     }
     @PUT
-    @Path("/admin/status-activation/{userId}")
+    @Path("/admin/status-activation/{id}")
     @Produces(MediaType.APPLICATION_JSON)
-    public void statusActivation(@PathParam("userId") Integer userId){ userService.statusActivation(userId); }
+    public void statusActivation(@PathParam("id") Integer userId){ userService.statusActivation(userId); }
 
     @PUT
-    @Path("/admin/status-deactivation/{userId}")
+    @Path("/admin/status-deactivation/{id}")
     @Produces(MediaType.APPLICATION_JSON)
-    public void statusDeactivation(@PathParam("userId") Integer userId){ userService.statusDeactivation(userId); }
+    public void statusDeactivation(@PathParam("id") Integer userId){ userService.statusDeactivation(userId); }
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
