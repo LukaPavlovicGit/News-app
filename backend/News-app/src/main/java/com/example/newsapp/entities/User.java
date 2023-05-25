@@ -18,7 +18,7 @@ public class User {
     @NotNull(message = "password field is required")
     @NotEmpty(message = "password field is required")
     private String hashedPassword;
-    private boolean status;
+    private Boolean status;
 
     public User() {
         status = false;
@@ -40,6 +40,16 @@ public class User {
         this.firstname = firstname;
         this.lastname = lastname;
         this.email = email;
+        this.status = status;
+    }
+
+    public User(Integer id, String role, String firstname, String lastname, String email, String hashedPassword, Boolean status) {
+        this.id = id;
+        this.role = role;
+        this.firstname = firstname;
+        this.lastname = lastname;
+        this.email = email;
+        this.hashedPassword = hashedPassword;
         this.status = status;
     }
 
@@ -96,7 +106,7 @@ public class User {
     }
 
 
-    public boolean getStatus() {
+    public Boolean getStatus() {
         return status;
     }
 

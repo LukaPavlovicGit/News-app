@@ -1,5 +1,7 @@
 package com.example.newsapp;
 
+import com.example.newsapp.filters.AuthFilter;
+import com.example.newsapp.filters.CorsFilter;
 import com.example.newsapp.repository.*;
 import com.example.newsapp.repository.impl.*;
 import com.example.newsapp.service.*;
@@ -40,7 +42,8 @@ public class HelloApplication extends ResourceConfig {
         };
 
         register(binder);
-        // Ucitavamo resurse
+        register(AuthFilter.class);
+        register(CorsFilter.class);
         packages("com.example.newsapp.resource");
     }
 

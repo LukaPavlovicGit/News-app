@@ -20,10 +20,7 @@ public class AuthFilter implements ContainerRequestFilter {
     @Override
     public void filter(ContainerRequestContext requestContext) throws IOException {
 
-        boolean authenticationRequired = this.isAuthenticationRequired(requestContext);
-        boolean authorizationRequired = this.isAuthorizationRequired(requestContext);
-
-        if (!authenticationRequired && !authorizationRequired) {
+        if(requestContext.getUriInfo().getPath().contains("login")){
             return;
         }
 
@@ -33,10 +30,10 @@ public class AuthFilter implements ContainerRequestFilter {
                 token = token.replace("Bearer ", "");
             }
 
-            if(authorizationRequired && !this.userService.isHighAuthorized(token)){
+            if(this.isAuthorizationRequired(requestContext) && !this.userService.isAuthorized(token)){
                 requestContext.abortWith(Response.status(Response.Status.UNAUTHORIZED).build());
             }
-            else if(authenticationRequired && !this.userService.isLowAuthorized(token)){
+            else if(this.isAuthenticationRequired(requestContext) && !this.userService.isAuthenticated(token)){
                 requestContext.abortWith(Response.status(Response.Status.UNAUTHORIZED).build());
             }
 
@@ -46,10 +43,6 @@ public class AuthFilter implements ContainerRequestFilter {
     }
 
     private boolean isAuthenticationRequired(ContainerRequestContext req) {
-        if (req.getUriInfo().getPath().contains("login")) {
-            return false;
-        }
-
         List<Object> matchedResources = req.getUriInfo().getMatchedResources();
         for (Object matchedResource : matchedResources) {
             if (    matchedResource instanceof CategoryResource ||
@@ -60,15 +53,13 @@ public class AuthFilter implements ContainerRequestFilter {
                 return true;
             }
         }
-
         return false;
     }
 
     private boolean isAuthorizationRequired(ContainerRequestContext req) {
-        if (req.getUriInfo().getPath().contains("register")) {
+        if (req.getUriInfo().getPath().contains("admin")) {
             return true;
         }
-
         return false;
     }
 }

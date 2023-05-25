@@ -6,10 +6,13 @@ import com.example.newsapp.entities.User;
 import com.example.newsapp.repository.CategoryRepository;
 import com.example.newsapp.repository.UserRepository;
 import com.example.newsapp.repository.mysqlAbstract.MySqlAbstractRepository;
+import com.example.newsapp.utility.Utility;
 
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class UserRepositoryImpl extends MySqlAbstractRepository implements UserRepository {
     @Override
@@ -52,28 +55,60 @@ public class UserRepositoryImpl extends MySqlAbstractRepository implements UserR
         Connection connection = null;
         PreparedStatement preparedStatement = null;
         ResultSet resultSet = null;
+
+        Integer idx = 1;
+        Map<String, Integer> indexes = new HashMap<>();
+        StringBuilder sb = new StringBuilder("UPDATE users SET ");
+        if(Utility.notNullAndEmpty(user.getRole())) {
+            sb.append(" role=?,");
+            indexes.put("role", idx++);
+        }
+        if(Utility.notNullAndEmpty(user.getFirstname())) {
+            sb.append(" firstname=?,");
+            indexes.put("firstname", idx++);
+        }
+        if(Utility.notNullAndEmpty(user.getLastname())) {
+            sb.append(" lastname=?,");
+            indexes.put("lastname", idx++);
+        }
+        if(Utility.notNullAndEmpty(user.getEmail())) {
+            sb.append(" email=?,");
+            indexes.put("email", idx++);
+        }
+        if(Utility.notNullAndEmpty(user.getHashedPassword())) {
+            sb.append(" hashed_password=?,");
+            indexes.put("hashed_password", idx++);
+        }
+        if(user.getStatus() != null) {
+            sb.append(" status=?,");
+            indexes.put("status", idx++);
+        }
+
+        // Delete last comma sign
+        sb.deleteCharAt(sb.length() - 1);
+        sb.append(" WHERE id=?");
+
+        indexes.put("id", idx++);
+
         try {
+            if(sb.toString().equals( "UPDATE users SET WHERE id=?")){
+                throw new SQLException("Nothing to update...");
+            }
+
             connection = this.newConnection();
             String[] generatedColumns = {"id"};
 
-            preparedStatement = connection.prepareStatement("UPDATE INTO users (role, firstname, lastname, email, hashed_password, status) VALUES(?, ?, ?, ?, ?, ?)", generatedColumns);
 
-            if(user.getRole() != null && !user.getRole().isEmpty()){
-                preparedStatement.setString(1, user.getRole());
-            }
-            if(user.getFirstname() != null && !user.getFirstname().isEmpty()){
-                preparedStatement.setString(2, user.getFirstname());
-            }
-            if(user.getLastname() != null && !user.getLastname().isEmpty()) {
-                preparedStatement.setString(3, user.getLastname());
-            }
-            if(user.getEmail() != null && !user.getEmail().isEmpty()) {
-                preparedStatement.setString(4, user.getEmail());
-            }
-            if(user.getHashedPassword() != null && !user.getHashedPassword().isEmpty()) {
-                preparedStatement.setString(5, user.getHashedPassword());
-            }
-            preparedStatement.setBoolean(6, user.getStatus());
+            System.out.println("QUERY: " + sb);
+            preparedStatement = connection.prepareStatement(sb.toString(), generatedColumns);
+
+            if(sb.toString().contains("role=?")) { preparedStatement.setString(indexes.get("role"), user.getRole()); }
+            if(sb.toString().contains("firstname=?")) { preparedStatement.setString(indexes.get("firstname"), user.getFirstname()); }
+            if(sb.toString().contains("lastname=?")) { preparedStatement.setString(indexes.get("lastname"), user.getLastname()); }
+            if(sb.toString().contains("email=?")) { preparedStatement.setString(indexes.get("email"), user.getEmail()); }
+            if(sb.toString().contains("hashed_password=?")) { preparedStatement.setString(indexes.get("hashed_password"), user.getHashedPassword()); }
+            if(sb.toString().contains("status=?")) { preparedStatement.setBoolean(indexes.get("status"), user.getStatus()); }
+            preparedStatement.setInt(indexes.get("id"), user.getId());
 
             preparedStatement.executeUpdate();
             resultSet = preparedStatement.getGeneratedKeys();
@@ -91,6 +126,46 @@ public class UserRepositoryImpl extends MySqlAbstractRepository implements UserR
         }
 
         return user;
+    }
+
+    @Override
+    public void statusActivation(Integer userId) {
+        Connection connection = null;
+        PreparedStatement preparedStatement = null;
+        try {
+            connection = this.newConnection();
+
+            preparedStatement = connection.prepareStatement("UPDATE users SET status=? WHERE id=?");
+            preparedStatement.setBoolean(1, true);
+            preparedStatement.setInt(2, userId);
+            preparedStatement.executeUpdate();
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            this.closeStatement(preparedStatement);
+            this.closeConnection(connection);
+        }
+    }
+
+    @Override
+    public void statusDeactivation(Integer userId) {
+        Connection connection = null;
+        PreparedStatement preparedStatement = null;
+        try {
+            connection = this.newConnection();
+
+            preparedStatement = connection.prepareStatement("UPDATE users SET status=? WHERE id=?");
+            preparedStatement.setBoolean(1, false);
+            preparedStatement.setInt(2, userId);
+            preparedStatement.executeUpdate();
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            this.closeStatement(preparedStatement);
+            this.closeConnection(connection);
+        }
     }
 
     @Override

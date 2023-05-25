@@ -21,15 +21,9 @@ public class RegisterRequest {
 
     private String role;
 
-    public RegisterRequest() {
-    }
+    private boolean status;
 
-    public RegisterRequest(String firstname, String lastname, String email, String password, String role) {
-        this.email = email;
-        this.firstname = firstname;
-        this.lastname = lastname;
-        this.password = password;
-        this.role = role;
+    public RegisterRequest() {
     }
 
     public String getEmail() {
@@ -70,5 +64,17 @@ public class RegisterRequest {
 
     public void setRole(String role) {
         this.role = role;
+    }
+
+    public boolean isStatus() {
+        return status;
+    }
+
+    public boolean getStatus() {
+        return status;
+    }
+
+    public void setStatus(boolean status) {
+        this.status = status;
     }
 }

@@ -1,8 +1,6 @@
 package com.example.newsapp.requests;
 
 public class UpdateUserRequest {
-
-    private Integer id;
     private String role;
 
     private String firstname;
@@ -12,24 +10,16 @@ public class UpdateUserRequest {
     private String email;
 
     private String password;
+    private Boolean status;
 
     public UpdateUserRequest() {  }
 
-    public UpdateUserRequest(Integer id, String role, String firstname, String lastname, String email, String password) {
-        this.id = id;
+    public UpdateUserRequest(String role, String firstname, String lastname, String email, String password) {
         this.role = role;
         this.firstname = firstname;
         this.lastname = lastname;
         this.email = email;
         this.password = password;
-    }
-
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
     }
 
     public String getRole() {
@@ -70,5 +60,13 @@ public class UpdateUserRequest {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public Boolean getStatus() {
+        return status;
+    }
+
+    public void setStatus(Boolean status) {
+        this.status = status;
     }
 }

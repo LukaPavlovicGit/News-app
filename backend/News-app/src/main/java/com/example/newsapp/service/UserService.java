@@ -20,10 +20,6 @@ public class UserService {
     public String login(String email, String password){
         String hashedPassword = DigestUtils.sha256Hex(password);
         User user = this.userRepository.findByEmail(email);
-        if(user != null){
-            System.out.println("entered:" + hashedPassword);
-            System.out.println("stored :" + user.getHashedPassword());
-        }
         if (user == null || !user.getHashedPassword().equals(hashedPassword)) {
             return null;
         }
@@ -48,30 +44,33 @@ public class UserService {
                 .sign(algorithm);
     }
 
-    public User register(String role, String firstname, String lastname, String email, String password){
+    public User register(String role, String firstname, String lastname, String email, String password, boolean status){
         User user = new User();
         user.setFirstname(firstname);
         user.setLastname(lastname);
         user.setRole(role);
         user.setEmail(email);
         user.setHashedPassword(DigestUtils.sha256Hex(password));
+        user.setStatus(status);
         return userRepository.insert(user);
     }
 
-    public User update(Integer id, String role, String firstname, String lastname, String email, String password){
-        User user = new User();
-        user.setRole(role);
-        user.setFirstname(firstname);
-        user.setLastname(lastname);
-        user.setRole(role);
-        user.setEmail(email);
-        user.setHashedPassword(DigestUtils.sha256Hex(password));
+    public User update(Integer id, String role, String firstname, String lastname, String email, String password, Boolean status){
+        User user = new User(id, role, firstname, lastname, email, password == null ? null : DigestUtils.sha256Hex(password), status);
         return userRepository.update(user);
+    }
+
+    public void statusActivation(Integer userId){
+        userRepository.statusActivation(userId);
+    }
+
+    public void statusDeactivation(Integer userId){
+        userRepository.statusDeactivation(userId);
     }
 
     public List<User> getAll(){ return userRepository.getAll(); }
 
-    public boolean isLowAuthorized(String token){
+    public boolean isAuthenticated(String token){
         Algorithm algorithm = Algorithm.HMAC256("secret");
         JWTVerifier verifier = JWT.require(algorithm).build();
         DecodedJWT jwt = verifier.verify(token);
@@ -87,7 +86,7 @@ public class UserService {
         return true;
     }
 
-    public boolean isHighAuthorized(String token){
+    public boolean isAuthorized(String token){
         Algorithm algorithm = Algorithm.HMAC256("secret");
         JWTVerifier verifier = JWT.require(algorithm).build();
         DecodedJWT jwt = verifier.verify(token);
