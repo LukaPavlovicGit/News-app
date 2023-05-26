@@ -26,7 +26,7 @@ public class CommentRepositoryImpl extends MySqlAbstractRepository implements Co
             connection = this.newConnection();
             String[] generatedColumns = {"id"};
 
-            preparedStatement = connection.prepareStatement("INSERT INTO comments (news_id, author, content, createdAt) VALUES(?, ?, ?, ?)", generatedColumns);
+            preparedStatement = connection.prepareStatement("INSERT INTO comments (news_id, author, content, created_at) VALUES(?, ?, ?, ?)", generatedColumns);
             preparedStatement.setInt(1, comment.getNewsId());
             preparedStatement.setString(2, comment.getAuthor());
             preparedStatement.setString(3, comment.getContent());
@@ -53,7 +53,6 @@ public class CommentRepositoryImpl extends MySqlAbstractRepository implements Co
     public Comment update(Comment comment) {
         Connection connection = null;
         PreparedStatement preparedStatement = null;
-        ResultSet resultSet = null;
 
         int idx = 1;
         Map<String, Integer> indexes = new HashMap<>();
@@ -78,17 +77,15 @@ public class CommentRepositoryImpl extends MySqlAbstractRepository implements Co
             }
 
             connection = this.newConnection();
-            String[] generatedColumns = {"id"};
 
-            preparedStatement = connection.prepareStatement(sb.toString(), generatedColumns);
+            preparedStatement = connection.prepareStatement(sb.toString());
 
             if(sb.toString().contains("author=?")) { preparedStatement.setString(indexes.get("author"), comment.getAuthor()); }
             if(sb.toString().contains("content=?")) { preparedStatement.setString(indexes.get("content"), comment.getContent()); }
             preparedStatement.setInt(indexes.get("id"), comment.getId());
 
-            preparedStatement.executeUpdate();
-            resultSet = preparedStatement.getGeneratedKeys();
-            if(resultSet.next() == false){
+            int status = preparedStatement.executeUpdate();
+            if(status == 0){
                 comment = null;
             }
 
@@ -97,7 +94,6 @@ public class CommentRepositoryImpl extends MySqlAbstractRepository implements Co
         } finally {
             this.closeStatement(preparedStatement);
             this.closeConnection(connection);
-            this.closeResultSet(resultSet);
         }
 
         return comment;
@@ -111,17 +107,11 @@ public class CommentRepositoryImpl extends MySqlAbstractRepository implements Co
         ResultSet resultSet = null;
         try {
             connection = this.newConnection();
-            String[] generatedColumns = {"id", "news_id", "author", "content"};
-            preparedStatement = connection.prepareStatement("DELETE FROM comments WHERE id = ?", generatedColumns);
+            preparedStatement = connection.prepareStatement("DELETE FROM comments WHERE id = ?");
             preparedStatement.setInt(1, id);
-            resultSet = preparedStatement.executeQuery();
-            if(resultSet.next()){
-                comment = new Comment(
-                        resultSet.getInt("id"),
-                        resultSet.getInt("news_id"),
-                        resultSet.getString("author"),
-                        resultSet.getString("content")
-                );
+            int status = preparedStatement.executeUpdate();
+            if(status == 1){
+                comment = new Comment(id);
             }
 
         } catch (Exception e) {
@@ -154,7 +144,7 @@ public class CommentRepositoryImpl extends MySqlAbstractRepository implements Co
                         resultSet.getInt("news_id"),
                         resultSet.getString("author"),
                         resultSet.getString("content"),
-                        resultSet.getLong("createdAt")
+                        resultSet.getLong("created_at")
                 ));
             }
 

@@ -20,13 +20,15 @@ public class CategoryResource {
     public List<Category> getAll(){ return categoryService.getAll();  }
 
     @POST
+    @Path("/content-creator")
     @Produces(MediaType.APPLICATION_JSON)
     public Category create(@Valid Category category){ return categoryService.insert(category); }
     @PUT
+    @Path("/content-creator")
     @Produces(MediaType.APPLICATION_JSON)
     public Category update(Category category){ return categoryService.update(category); }
     @DELETE
-    @Path("/{id}")
+    @Path("/content-creator/{id}")
     @Produces(MediaType.APPLICATION_JSON)
     public Category delete(@PathParam("id") Integer id) {return categoryService.delete(id); }
 }

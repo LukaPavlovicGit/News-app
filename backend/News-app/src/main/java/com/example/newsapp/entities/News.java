@@ -1,11 +1,14 @@
 package com.example.newsapp.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 public class News {
     private Integer id;
@@ -30,16 +33,7 @@ public class News {
 
 
     public News() { tags = ""; }
-
-    public News(String categoryName, String title, String content, String author, Long createdAt, int visits) {
-        this.categoryName = categoryName;
-        this.title = title;
-        this.content = content;
-        this.author = author;
-        this.createdAt = createdAt;
-        this.visits = visits;
-        this.tags = "";
-    }
+    public News(Integer id) { this.id = id; }
 
     public News(Integer id, String categoryName, String title, String content, String author, Long createdAt, int visits) {
         this.id = id;
@@ -133,5 +127,11 @@ public class News {
 
     public void setComments(List<Comment> comments) {
         this.comments = comments;
+    }
+
+    private Long getLocalDateTimeLong(){
+        LocalDateTime localDateTime = LocalDateTime.now();
+        ZonedDateTime zdt = ZonedDateTime.of(localDateTime, ZoneId.systemDefault());
+        return zdt.toInstant().toEpochMilli();
     }
 }

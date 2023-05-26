@@ -77,7 +77,6 @@ public class CategoryRepositoryImpl extends MySqlAbstractRepository implements C
     public Category update(Category category) {
         Connection connection = null;
         PreparedStatement preparedStatement = null;
-        ResultSet resultSet = null;
 
         int idx = 1;
         Map<String, Integer> indexes = new HashMap<>();
@@ -102,18 +101,16 @@ public class CategoryRepositoryImpl extends MySqlAbstractRepository implements C
             }
 
             connection = this.newConnection();
-            String[] generatedColumns = {"id"};
 
             System.out.println("QUERY: " + sb);
-            preparedStatement = connection.prepareStatement(sb.toString(), generatedColumns);
+            preparedStatement = connection.prepareStatement(sb.toString());
 
             if(sb.toString().contains("name=?")) { preparedStatement.setString(indexes.get("name"), category.getName()); }
             if(sb.toString().contains("description=?")) { preparedStatement.setString(indexes.get("description"), category.getDescription()); }
             preparedStatement.setInt(indexes.get("id"), category.getId());
 
-            preparedStatement.executeUpdate();
-            resultSet = preparedStatement.getGeneratedKeys();
-            if(resultSet.next() == false){
+            int status = preparedStatement.executeUpdate();
+            if(status == 0){
                 category = null;
             }
 
@@ -122,7 +119,6 @@ public class CategoryRepositoryImpl extends MySqlAbstractRepository implements C
         } finally {
             this.closeStatement(preparedStatement);
             this.closeConnection(connection);
-            this.closeResultSet(resultSet);
         }
 
         return category;
@@ -148,16 +144,12 @@ public class CategoryRepositoryImpl extends MySqlAbstractRepository implements C
                 throw new Exception();
 
             closeStatement(preparedStatement);
-            String[] generatedColumns = {"id", "name", "description"};
-            preparedStatement = connection.prepareStatement("DELETE FROM categories WHERE id = ?", generatedColumns);
+            preparedStatement = connection.prepareStatement("DELETE FROM categories WHERE id = ?");
             preparedStatement.setInt(1, id);
-            resultSet = preparedStatement.executeQuery();
-            if(resultSet.next()){
-                category = new Category(
-                        resultSet.getInt("id"),
-                        resultSet.getString("name"),
-                        resultSet.getString("description")
-                );
+            int status = preparedStatement.executeUpdate();
+
+            if(status == 1){
+                category = new Category(id);
             }
 
         } catch (Exception e) {

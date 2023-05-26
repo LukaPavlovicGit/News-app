@@ -22,7 +22,7 @@ public class TagRepositoryImpl extends MySqlAbstractRepository implements TagRep
             connection = this.newConnection();
             String[] generatedColumns = {"id"};
 
-            preparedStatement = connection.prepareStatement("INSERT INTO tags (keyword) VALUES(?)", generatedColumns);
+            preparedStatement = connection.prepareStatement("INSERT INTO tags (keyword) VALUES (?)", generatedColumns);
             preparedStatement.setString(1, tag.getKeyword());
             preparedStatement.executeUpdate();
             resultSet = preparedStatement.getGeneratedKeys();
@@ -39,7 +39,7 @@ public class TagRepositoryImpl extends MySqlAbstractRepository implements TagRep
             this.closeResultSet(resultSet);
         }
 
-        return tag;
+        return tag.getId() == null ? null : tag;
     }
 
     @Override
@@ -51,7 +51,9 @@ public class TagRepositoryImpl extends MySqlAbstractRepository implements TagRep
 
         try {
             connection = this.newConnection();
-            preparedStatement = connection.prepareStatement("SELECT * FROM tags WHERE keyword = ?");
+
+            // by default mySql in case insensitive. To make it case sensitive 'BINARY' clause is needed
+            preparedStatement = connection.prepareStatement("SELECT * FROM tags WHERE BINARY keyword = ?");
             preparedStatement.setString(1, keyword);
             resultSet = preparedStatement.executeQuery();
 

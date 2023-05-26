@@ -11,7 +11,7 @@ public class NewsService {
     private NewsRepository newsRepository;
 
     public News insert(News news){ return newsRepository.insert(news); }
-    public News update(News news){ return newsRepository.insert(news); }
+    public News update(News news){ return newsRepository.update(news); }
     public News newsVisited(Integer id){ return newsRepository.newsVisited(id); }
     public News delete(Integer id){ return newsRepository.delete(id); }
     public List<News> mostRead(){ return newsRepository.mostRead(); }

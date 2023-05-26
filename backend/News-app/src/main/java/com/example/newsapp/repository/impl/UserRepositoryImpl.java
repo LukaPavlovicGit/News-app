@@ -54,7 +54,6 @@ public class UserRepositoryImpl extends MySqlAbstractRepository implements UserR
     public User update(User user) {
         Connection connection = null;
         PreparedStatement preparedStatement = null;
-        ResultSet resultSet = null;
 
         int idx = 1;
         Map<String, Integer> indexes = new HashMap<>();
@@ -94,10 +93,9 @@ public class UserRepositoryImpl extends MySqlAbstractRepository implements UserR
             }
 
             connection = this.newConnection();
-            String[] generatedColumns = {"id"};
 
             System.out.println("QUERY: " + sb);
-            preparedStatement = connection.prepareStatement(sb.toString(), generatedColumns);
+            preparedStatement = connection.prepareStatement(sb.toString());
 
             if(sb.toString().contains("role=?")) { preparedStatement.setString(indexes.get("role"), user.getRole()); }
             if(sb.toString().contains("firstname=?")) { preparedStatement.setString(indexes.get("firstname"), user.getFirstname()); }
@@ -107,9 +105,8 @@ public class UserRepositoryImpl extends MySqlAbstractRepository implements UserR
             if(sb.toString().contains("status=?")) { preparedStatement.setBoolean(indexes.get("status"), user.getStatus()); }
             preparedStatement.setInt(indexes.get("id"), user.getId());
 
-            preparedStatement.executeUpdate();
-            resultSet = preparedStatement.getGeneratedKeys();
-            if(resultSet.next() == false){
+            int status = preparedStatement.executeUpdate();
+            if(status == 0){
                 user = null;
             }
 
@@ -118,7 +115,6 @@ public class UserRepositoryImpl extends MySqlAbstractRepository implements UserR
         } finally {
             this.closeStatement(preparedStatement);
             this.closeConnection(connection);
-            this.closeResultSet(resultSet);
         }
 
         return user;

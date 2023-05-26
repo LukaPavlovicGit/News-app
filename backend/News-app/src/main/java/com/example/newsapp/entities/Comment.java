@@ -18,6 +18,7 @@ public class Comment {
     private Long createdAt;
 
     public Comment() {  }
+    public Comment(Integer id) { this.id = id; }
 
     public Comment(String author, String content, Long createdAt) {
         this.author = author;

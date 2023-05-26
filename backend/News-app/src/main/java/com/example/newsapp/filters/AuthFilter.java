@@ -20,6 +20,8 @@ public class AuthFilter implements ContainerRequestFilter {
     @Override
     public void filter(ContainerRequestContext requestContext) throws IOException {
 
+
+
         if(requestContext.getUriInfo().getPath().contains("login")){
             return;
         }
@@ -42,16 +44,9 @@ public class AuthFilter implements ContainerRequestFilter {
         }
     }
 
-    private boolean isAuthenticationRequired(ContainerRequestContext req) {
-        List<Object> matchedResources = req.getUriInfo().getMatchedResources();
-        for (Object matchedResource : matchedResources) {
-            if (    matchedResource instanceof CategoryResource ||
-                    matchedResource instanceof CommentResource ||
-                    matchedResource instanceof NewsResource ||
-                    matchedResource instanceof TagResource ||
-                    matchedResource instanceof UserResource     ){
-                return true;
-            }
+    private boolean isAuthenticationRequired(ContainerRequestContext req){
+        if (req.getUriInfo().getPath().contains("content-creator")) {
+            return true;
         }
         return false;
     }
@@ -62,4 +57,20 @@ public class AuthFilter implements ContainerRequestFilter {
         }
         return false;
     }
+
+//    private boolean isAuthenticationRequired(ContainerRequestContext req) {
+//        List<Object> matchedResources = req.getUriInfo().getMatchedResources();
+//
+//        for (Object matchedResource : matchedResources) {
+//            if (    matchedResource instanceof CategoryResource ||
+//                    matchedResource instanceof CommentResource ||
+//                    matchedResource instanceof NewsResource ||
+//                    matchedResource instanceof TagResource ||
+//                    matchedResource instanceof UserResource     ){
+//                return true;
+//            }
+//        }
+//        return false;
+//    }
+
 }

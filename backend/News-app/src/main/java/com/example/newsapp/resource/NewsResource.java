@@ -15,38 +15,42 @@ public class NewsResource {
     private NewsService newsService;
 
     @POST
+    @Path("/content-creator")
     @Produces(MediaType.APPLICATION_JSON)
     public News create(@Valid News news){ return newsService.insert(news); }
 
     @PUT
-    @Path("/{id}")
+    @Path("/content-creator/{id}")
     @Produces(MediaType.APPLICATION_JSON)
-    public News update(@PathParam("id") Integer id, @Valid News news){ return null; }
+    public News update(@PathParam("id") Integer id, News news){
+        news.setId(id);
+        return newsService.update(news);
+    }
 
     @PUT
     @Path("/visited/{newsId}")
     @Produces(MediaType.APPLICATION_JSON)
-    public News visited(@PathParam("newsId") Integer newsId){ return null; }
+    public News visited(@PathParam("newsId") Integer newsId){ return newsService.newsVisited(newsId); }
 
     @DELETE
-    @Path("/{id}")
+    @Path("/content-creator/{id}")
     @Produces(MediaType.APPLICATION_JSON)
-    public News delete(@PathParam("id") Integer id){ return null; }
+    public News delete(@PathParam("id") Integer id){ return newsService.delete(id); }
 
     @GET
     @Path("/most-read")
     @Produces(MediaType.APPLICATION_JSON)
-    public News getMostRead(){ return null; }
+    public List<News> getMostRead(){ return newsService.mostRead(); }
 
     @GET
     @Path("/by-category/{categoryName}")
     @Produces(MediaType.APPLICATION_JSON)
-    public News getByCategoryName(@PathParam("categoryName") String categoryName){ return null; }
+    public List<News> getByCategoryName(@PathParam("categoryName") String categoryName){ return newsService.findAllByCategory(categoryName); }
 
     @GET
     @Path("/by-tag/{tagName}")
     @Produces(MediaType.APPLICATION_JSON)
-    public News getByTagName(@PathParam("tagName") String tagName){ return null; }
+    public List<News> getByTagName(@PathParam("tagName") String tagName){ return newsService.findAllByTag(tagName); }
 
     @GET
     @Path("/{id}")

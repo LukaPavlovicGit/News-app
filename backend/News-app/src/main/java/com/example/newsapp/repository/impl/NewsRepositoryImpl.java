@@ -18,6 +18,7 @@ public class NewsRepositoryImpl extends MySqlAbstractRepository implements NewsR
     private TagRepository tagRepository;
     @Inject
     private NewsTagRepository newsTagRepository;
+    @Inject
     private CommentRepository commentRepository;
 
     @Override
@@ -29,7 +30,7 @@ public class NewsRepositoryImpl extends MySqlAbstractRepository implements NewsR
             connection = this.newConnection();
             String[] generatedColumns = {"id"};
 
-            preparedStatement = connection.prepareStatement("INSERT INTO news (category_name, title, content, author, createdAt, visits, tags) VALUES(?, ?, ?, ?, ?, ?, ?)", generatedColumns);
+            preparedStatement = connection.prepareStatement("INSERT INTO news (category_name, title, content, author, created_at, visits, tags) VALUES(?, ?, ?, ?, ?, ?, ?)", generatedColumns);
             preparedStatement.setString(1, news.getCategoryName());
             preparedStatement.setString(2, news.getTitle());
             preparedStatement.setString(3, news.getContent());
@@ -44,7 +45,7 @@ public class NewsRepositoryImpl extends MySqlAbstractRepository implements NewsR
                 news.setId(resultSet.getInt(1));
 
                 if(Utility.notNullAndEmpty(news.getTags())){
-                    String[] keywords = news.getTags().split("[,#.|;:-]");
+                    String[] keywords = Utility.getKeywords(news.getTags());
                     for(String keyword : keywords){
                         Tag tag = tagRepository.findByKeyword(keyword);
                         if(tag == null){
@@ -70,7 +71,7 @@ public class NewsRepositoryImpl extends MySqlAbstractRepository implements NewsR
     public News update(News updatedNews) {
         Connection connection = null;
         PreparedStatement preparedStatement = null;
-        ResultSet resultSet = null;
+
         int idx = 1;
         Map<String, Integer> indexes = new HashMap<>();
         StringBuilder sb = new StringBuilder("UPDATE news SET ");
@@ -103,12 +104,10 @@ public class NewsRepositoryImpl extends MySqlAbstractRepository implements NewsR
             if(sb.toString().equals( "UPDATE news SET WHERE id=?")){
                 throw new SQLException("Nothing to update...");
             }
-
             connection = this.newConnection();
-            String[] generatedColumns = {"id"};
 
             System.out.println("QUERY: " + sb);
-            preparedStatement = connection.prepareStatement(sb.toString(), generatedColumns);
+            preparedStatement = connection.prepareStatement(sb.toString());
 
             if(sb.toString().contains("category_name=?")) { preparedStatement.setString(indexes.get("category_name"), updatedNews.getCategoryName()); }
             if(sb.toString().contains("title=?")) { preparedStatement.setString(indexes.get("title"), updatedNews.getTitle()); }
@@ -117,12 +116,11 @@ public class NewsRepositoryImpl extends MySqlAbstractRepository implements NewsR
             if(sb.toString().contains("tags=?")) { preparedStatement.setString(indexes.get("tags"), updatedNews.getTags()); }
             preparedStatement.setInt(indexes.get("id"), updatedNews.getId());
 
-            preparedStatement.executeUpdate();
-            resultSet = preparedStatement.getGeneratedKeys();
-            if(resultSet.next()){
+            int status = preparedStatement.executeUpdate();
+            if(status == 1){
                 if(Utility.notNullAndEmpty(updatedNews.getTags())){
                     newsTagRepository.deleteByNewsId(updatedNews.getId());
-                    String[] keywords = updatedNews.getTags().split("[,#.|;:-]");
+                    String[] keywords = Utility.getKeywords(updatedNews.getTags());
                     for(String keyword : keywords){
                         Tag tag = tagRepository.findByKeyword(keyword);
                         if(tag == null){
@@ -135,13 +133,11 @@ public class NewsRepositoryImpl extends MySqlAbstractRepository implements NewsR
             else{
                 updatedNews = null;
             }
-
         } catch (SQLException e) {
             e.printStackTrace();
         } finally {
             this.closeStatement(preparedStatement);
             this.closeConnection(connection);
-            this.closeResultSet(resultSet);
         }
 
         return updatedNews;
@@ -155,24 +151,30 @@ public class NewsRepositoryImpl extends MySqlAbstractRepository implements NewsR
         ResultSet resultSet = null;
         try {
             connection = this.newConnection();
-            String[] generatedColumns = {"id", "category_name", "title", "content", "author", "created_at", "visits", "tags"};
-            preparedStatement = connection.prepareStatement("UPDATE news SET visits = visits + 1 WHERE id = ?", generatedColumns);
+            preparedStatement = connection.prepareStatement("UPDATE news SET visits = visits + 1 WHERE id = ?");
             preparedStatement.setInt(1, newsId);
-            preparedStatement.executeUpdate();
-            resultSet = preparedStatement.getGeneratedKeys();
-            if(resultSet.next()){
-                news = new News(
-                        resultSet.getInt("id"),
-                        resultSet.getString("category_name"),
-                        resultSet.getString("title"),
-                        resultSet.getString("content"),
-                        resultSet.getString("author"),
-                        resultSet.getLong("created_at"),
-                        resultSet.getInt("visits"),
-                        resultSet.getString("tags") );
+            int status = preparedStatement.executeUpdate();
 
-                List<Comment> comments = commentRepository.findByNewsId(newsId);
-                news.setComments(comments);
+            if(status == 1){
+                preparedStatement.close();
+                preparedStatement = connection.prepareStatement("SELECT * FROM news WHERE id = ?");
+                preparedStatement.setInt(1, newsId);
+
+                resultSet = preparedStatement.executeQuery();
+                if(resultSet.next()) {
+                    news = new News(
+                            resultSet.getInt("id"),
+                            resultSet.getString("category_name"),
+                            resultSet.getString("title"),
+                            resultSet.getString("content"),
+                            resultSet.getString("author"),
+                            resultSet.getLong("created_at"),
+                            resultSet.getInt("visits"),
+                            resultSet.getString("tags")
+                    );
+                    List<Comment> comments = commentRepository.findByNewsId(newsId);
+                    news.setComments(comments);
+                }
             }
 
         } catch (SQLException e) {
@@ -191,31 +193,20 @@ public class NewsRepositoryImpl extends MySqlAbstractRepository implements NewsR
         News news = null;
         Connection connection = null;
         PreparedStatement preparedStatement = null;
-        ResultSet resultSet = null;
         try {
             connection = this.newConnection();
-            String[] generatedColumns = {"id", "category_name", "title", "content", "author", "created_at", "visits", "tags"};
-            preparedStatement = connection.prepareStatement("DELETE FROM news WHERE id = ?", generatedColumns);
+            preparedStatement = connection.prepareStatement("DELETE FROM news WHERE id = ?");
             preparedStatement.setInt(1, id);
-            resultSet = preparedStatement.executeQuery();
-            if(resultSet.next()) {
-                news = new News(
-                        resultSet.getInt("id"),
-                        resultSet.getString("category_name"),
-                        resultSet.getString("title"),
-                        resultSet.getString("content"),
-                        resultSet.getString("author"),
-                        resultSet.getLong("created_at"),
-                        resultSet.getInt("visits"),
-                        resultSet.getString("tags"));
-
+            int status = preparedStatement.executeUpdate();
+            System.out.println(status);
+            if(status == 1) {
+                news = new News(id);
                 newsTagRepository.deleteByNewsId(id);
             }
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
             this.closeStatement(preparedStatement);
-            this.closeResultSet(resultSet);
             this.closeConnection(connection);
         }
 
@@ -232,7 +223,7 @@ public class NewsRepositoryImpl extends MySqlAbstractRepository implements NewsR
         try {
             connection = this.newConnection();
             statement = connection.createStatement();
-            resultSet = statement.executeQuery("SELECT * FROM news ORDER BY visits DESC LIMIT 10");
+            resultSet = statement.executeQuery("SELECT * FROM news ORDER BY visits DESC 10");
 
             while(resultSet.next()){
                 news.add(new News(
@@ -241,11 +232,10 @@ public class NewsRepositoryImpl extends MySqlAbstractRepository implements NewsR
                         resultSet.getString("title"),
                         resultSet.getString("content"),
                         resultSet.getString("author"),
-                        resultSet.getLong("createdAt"),
+                        resultSet.getLong("created_at"),
                         resultSet.getInt("visits")
                 ));
             }
-
         } catch (Exception e){
             e.printStackTrace();
         } finally {
@@ -276,7 +266,7 @@ public class NewsRepositoryImpl extends MySqlAbstractRepository implements NewsR
                 news.setTitle(resultSet.getString("title"));
                 news.setContent(resultSet.getString("content"));
                 news.setAuthor(resultSet.getString("author"));
-                news.setCreatedAt(resultSet.getLong("createdAt"));
+                news.setCreatedAt(resultSet.getLong("created_at"));
                 news.setVisits(resultSet.getInt("visits"));
             }
         } catch (Exception e){
@@ -310,8 +300,9 @@ public class NewsRepositoryImpl extends MySqlAbstractRepository implements NewsR
                         resultSet.getString("title"),
                         resultSet.getString("content"),
                         resultSet.getString("author"),
-                        resultSet.getLong("createdAt"),
-                        resultSet.getInt("visits")
+                        resultSet.getLong("created_at"),
+                        resultSet.getInt("visits"),
+                        resultSet.getString("tags")
                 ));
             }
         } catch (Exception e){
@@ -334,10 +325,8 @@ public class NewsRepositoryImpl extends MySqlAbstractRepository implements NewsR
 
         try {
             connection = this.newConnection();
-
             preparedStatement = connection.prepareStatement("SELECT * FROM news WHERE category_name = ?");
             preparedStatement.setString(1, categoryName);
-
             resultSet = preparedStatement.executeQuery();
 
             while(resultSet.next()){
@@ -347,11 +336,10 @@ public class NewsRepositoryImpl extends MySqlAbstractRepository implements NewsR
                         resultSet.getString("title"),
                         resultSet.getString("content"),
                         resultSet.getString("author"),
-                        resultSet.getLong("createdAt"),
+                        resultSet.getLong("created_at"),
                         resultSet.getInt("visits")
                 ));
             }
-
         } catch (Exception e){
             e.printStackTrace();
         } finally {
@@ -384,7 +372,7 @@ public class NewsRepositoryImpl extends MySqlAbstractRepository implements NewsR
                         resultSet.getString("title"),
                         resultSet.getString("content"),
                         resultSet.getString("author"),
-                        resultSet.getLong("createdAt"),
+                        resultSet.getLong("created_at"),
                         resultSet.getInt("visits")
                 ));
             }

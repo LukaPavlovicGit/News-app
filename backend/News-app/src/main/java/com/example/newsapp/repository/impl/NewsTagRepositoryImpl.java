@@ -24,7 +24,7 @@ public class NewsTagRepositoryImpl extends MySqlAbstractRepository implements Ne
             connection = this.newConnection();
             String[] generatedColumns = {"id"};
 
-            preparedStatement = connection.prepareStatement("INSERT INTO newstag (news_id, tag_id) VALUES(?, ?)", generatedColumns);
+            preparedStatement = connection.prepareStatement("INSERT INTO news_tag (news_id, tag_id) VALUES(?, ?)", generatedColumns);
             preparedStatement.setInt(1, newsTag.getNewsId());
             preparedStatement.setInt(2, newsTag.getTagId());
             preparedStatement.executeUpdate();
@@ -53,6 +53,7 @@ public class NewsTagRepositoryImpl extends MySqlAbstractRepository implements Ne
             connection = this.newConnection();
             preparedStatement = connection.prepareStatement("DELETE FROM news_tag WHERE news_id = ?");
             preparedStatement.setInt(1, newsId);
+            preparedStatement.executeUpdate();
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
@@ -70,7 +71,7 @@ public class NewsTagRepositoryImpl extends MySqlAbstractRepository implements Ne
 
         try {
             connection = this.newConnection();
-            preparedStatement = connection.prepareStatement("SELECT * FROM newstag WHERE news_id = ?");
+            preparedStatement = connection.prepareStatement("SELECT * FROM news_tag WHERE news_id = ?");
             preparedStatement.setInt(1, newsId);
             resultSet = preparedStatement.executeQuery();
 
@@ -102,7 +103,7 @@ public class NewsTagRepositoryImpl extends MySqlAbstractRepository implements Ne
 
         try {
             connection = this.newConnection();
-            preparedStatement = connection.prepareStatement("SELECT * FROM newstag WHERE tag_id = ?");
+            preparedStatement = connection.prepareStatement("SELECT * FROM news_tag WHERE tag_id = ?");
             preparedStatement.setInt(1, tagId);
             resultSet = preparedStatement.executeQuery();
 

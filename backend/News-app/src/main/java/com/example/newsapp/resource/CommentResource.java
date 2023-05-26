@@ -36,7 +36,7 @@ public class CommentResource {
     }
 
     @GET
-    @Path("/{newsId}")
+    @Path("/by-news/{newsId}")
     @Produces(MediaType.APPLICATION_JSON)
     public List<Comment> getAllByNewsId(@PathParam("newsId") Integer newsId){ return commentService.findAllByNewsId(newsId); }
 
