@@ -86,8 +86,8 @@ public class TagRepositoryImpl extends MySqlAbstractRepository implements TagRep
 
             while(resultSet.next()){
                 tags.add(new Tag(
-                        resultSet.getInt("id"),
-                        resultSet.getString("keyword")
+                    resultSet.getInt("id"),
+                    resultSet.getString("keyword")
                 ));
             }
 

@@ -46,6 +46,22 @@ public class NewsTagRepositoryImpl extends MySqlAbstractRepository implements Ne
     }
 
     @Override
+    public void deleteByNewsId(Integer newsId) {
+        Connection connection = null;
+        PreparedStatement preparedStatement = null;
+        try {
+            connection = this.newConnection();
+            preparedStatement = connection.prepareStatement("DELETE FROM news_tag WHERE news_id = ?");
+            preparedStatement.setInt(1, newsId);
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            this.closeStatement(preparedStatement);
+            this.closeConnection(connection);
+        }
+    }
+
+    @Override
     public List<NewsTag> findAllByNewsId(Integer newsId) {
         List<NewsTag> newsTags = new ArrayList<>();
         Connection connection = null;

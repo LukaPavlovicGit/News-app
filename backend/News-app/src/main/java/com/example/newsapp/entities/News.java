@@ -26,8 +26,10 @@ public class News {
     private int visits;
     private String tags;
 
+    private List<Comment> comments = new ArrayList<>();
 
-    public News() {  }
+
+    public News() { tags = ""; }
 
     public News(String categoryName, String title, String content, String author, Long createdAt, int visits) {
         this.categoryName = categoryName;
@@ -36,6 +38,7 @@ public class News {
         this.author = author;
         this.createdAt = createdAt;
         this.visits = visits;
+        this.tags = "";
     }
 
     public News(Integer id, String categoryName, String title, String content, String author, Long createdAt, int visits) {
@@ -46,6 +49,7 @@ public class News {
         this.author = author;
         this.createdAt = createdAt;
         this.visits = visits;
+        tags = "";
     }
 
     public News(Integer id, String categoryName, String title, String content, String author, Long createdAt, int visits, String tags) {
@@ -121,5 +125,13 @@ public class News {
 
     public void setTags(String tags) {
         this.tags = tags;
+    }
+
+    public List<Comment> getComments() {
+        return comments;
+    }
+
+    public void setComments(List<Comment> comments) {
+        this.comments = comments;
     }
 }

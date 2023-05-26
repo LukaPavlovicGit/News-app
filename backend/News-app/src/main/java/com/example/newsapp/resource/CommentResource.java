@@ -7,6 +7,7 @@ import javax.inject.Inject;
 import javax.validation.Valid;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 import java.util.List;
 @Path("/comments")
 public class CommentResource {
@@ -29,7 +30,7 @@ public class CommentResource {
     @DELETE
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Comment delete(@PathParam("id") Integer id, Comment comment){
+    public Response delete(@PathParam("id") Integer id, Comment comment){
         comment.setId(id);
         return null;
     }

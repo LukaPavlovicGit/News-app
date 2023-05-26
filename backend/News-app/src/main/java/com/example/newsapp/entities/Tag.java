@@ -11,16 +11,11 @@ public class Tag {
     @NotEmpty(message = "keyword field is required")
     private String keyword;
 
-    private Set<News> news = new HashSet<>();
-
-
     public Tag() {  }
 
-    public Tag(String keyword, Set<News> news) {
+    public Tag(String keyword) {
         this.keyword = keyword;
-        this.news = news;
     }
-
     public Tag(Integer id, String keyword) {
         this.id = id;
         this.keyword = keyword;
@@ -40,13 +35,5 @@ public class Tag {
 
     public void setKeyword(String keyword) {
         this.keyword = keyword;
-    }
-
-    public Set<News> getNews() {
-        return news;
-    }
-
-    public void setNews(Set<News> news) {
-        this.news = news;
     }
 }

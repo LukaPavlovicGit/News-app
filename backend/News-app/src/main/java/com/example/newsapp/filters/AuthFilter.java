@@ -34,7 +34,7 @@ public class AuthFilter implements ContainerRequestFilter {
                 requestContext.abortWith(Response.status(Response.Status.UNAUTHORIZED).build());
             }
             else if(this.isAuthenticationRequired(requestContext) && !this.userService.isAuthenticated(token)){
-                requestContext.abortWith(Response.status(Response.Status.UNAUTHORIZED).build());
+                requestContext.abortWith(Response.status(Response.Status.FORBIDDEN).build());
             }
 
         } catch (Exception exception) {

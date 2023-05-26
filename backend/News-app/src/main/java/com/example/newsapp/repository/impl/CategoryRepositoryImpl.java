@@ -94,7 +94,7 @@ public class CategoryRepositoryImpl extends MySqlAbstractRepository implements C
         sb.deleteCharAt(sb.length() - 1);
         sb.append(" WHERE id=?");
 
-        indexes.put("id", idx++);
+        indexes.put("id", idx);
 
         try {
             if (sb.toString().equals("UPDATE categories SET WHERE id=?")) {

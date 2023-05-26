@@ -7,9 +7,13 @@ import java.util.List;
 public interface NewsRepository {
 
     News insert(News news);
+    News update(News news);
+    News newsVisited(Integer newsId);
     News delete(Integer id);
+    List<News> mostRead();
+    List<News> findAllByCategory(String categoryName);
+    List<News> findAllByTag(String tagName);
     News findById(Integer id);
-    List<News> findAll();
-    List<News> findAllCategory(String categoryName);
+    List<News> findAll(int page);
 
 }

@@ -70,10 +70,10 @@ public class CommentRepositoryImpl extends MySqlAbstractRepository implements Co
         // Delete last comma sign
         sb.deleteCharAt(sb.length() - 1);
         sb.append(" WHERE id=?");
-        indexes.put("id", idx++);
+        indexes.put("id", idx);
 
         try {
-            if(sb.toString().equals( "UPDATE users SET WHERE id=?")){
+            if(sb.toString().equals( "UPDATE comments SET WHERE id=?")){
                 throw new SQLException("Nothing to update...");
             }
 
