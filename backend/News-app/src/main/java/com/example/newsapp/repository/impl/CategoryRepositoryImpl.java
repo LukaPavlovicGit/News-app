@@ -133,7 +133,7 @@ public class CategoryRepositoryImpl extends MySqlAbstractRepository implements C
 
         try {
             connection = this.newConnection();
-            preparedStatement = connection.prepareStatement("SELECT COUNT(*) AS total FROM news WHERE category_name = (SELECT name FROM categories WHERE id=?)");
+            preparedStatement = connection.prepareStatement("SELECT COUNT(*) AS total FROM news WHERE category_id = ?");
             preparedStatement.setInt(1, id);
             resultSet = preparedStatement.executeQuery();
 

@@ -24,9 +24,12 @@ public class CategoryResource {
     @Produces(MediaType.APPLICATION_JSON)
     public Category create(@Valid Category category){ return categoryService.insert(category); }
     @PUT
-    @Path("/content-creator")
+    @Path("/content-creator/{id}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Category update(Category category){ return categoryService.update(category); }
+    public Category update(@PathParam("id") Integer id, Category category){
+        category.setId(id);
+        return categoryService.update(category);
+    }
     @DELETE
     @Path("/content-creator/{id}")
     @Produces(MediaType.APPLICATION_JSON)

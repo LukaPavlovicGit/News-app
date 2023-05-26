@@ -24,34 +24,17 @@ public class CommentResource {
     @Produces(MediaType.APPLICATION_JSON)
     public Comment update(@PathParam("id") Integer id, Comment comment){
         comment.setId(id);
-        return null;
+        return commentService.update(comment);
     }
 
     @DELETE
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response delete(@PathParam("id") Integer id, Comment comment){
-        comment.setId(id);
-        return null;
-    }
+    public Comment delete(@PathParam("id") Integer id){ return commentService.delete(id); }
 
     @GET
     @Path("/by-news/{newsId}")
     @Produces(MediaType.APPLICATION_JSON)
     public List<Comment> getAllByNewsId(@PathParam("newsId") Integer newsId){ return commentService.findAllByNewsId(newsId); }
 
-//    @GET
-//    @Path("/byPostId/{id}")
-//    @Produces(MediaType.APPLICATION_JSON)
-//    public List<Comment> getByPostId(@PathParam("id") int id) { return commentService.getAllByPostId(id); }
-//
-//    @GET
-//    @Path("/{id}")
-//    @Produces(MediaType.APPLICATION_JSON)
-//    public Comment getById(@PathParam("id") int id) {return commentService.findById(id); }
-//
-//    @DELETE
-//    @Path("/{id}")
-//    @Produces(MediaType.APPLICATION_JSON)
-//    public void delete(@PathParam("id") int id) { commentService.delete(id); }
 }

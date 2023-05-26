@@ -11,7 +11,7 @@ public interface NewsRepository {
     News newsVisited(Integer newsId);
     News delete(Integer id);
     List<News> mostRead();
-    List<News> findAllByCategory(String categoryName);
+    List<News> findAllByCategory(Integer categoryId);
     List<News> findAllByTag(String tagName);
     News findById(Integer id);
     List<News> findAll(int page);

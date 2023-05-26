@@ -1,6 +1,6 @@
 package com.example.newsapp.entities;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.example.newsapp.utility.Utility;
 
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
@@ -14,7 +14,7 @@ public class News {
     private Integer id;
     @NotNull(message = "categoryName field is required")
     @NotEmpty(message = "categoryName field is required")
-    private String categoryName;
+    private Integer categoryId;
     @NotNull(message = "title field is required")
     @NotEmpty(message = "title field is required")
     private String title;
@@ -35,9 +35,9 @@ public class News {
     public News() { tags = ""; }
     public News(Integer id) { this.id = id; }
 
-    public News(Integer id, String categoryName, String title, String content, String author, Long createdAt, int visits) {
+    public News(Integer id, Integer categoryId, String title, String content, String author, Long createdAt, int visits) {
         this.id = id;
-        this.categoryName = categoryName;
+        this.categoryId = categoryId;
         this.title = title;
         this.content = content;
         this.author = author;
@@ -46,9 +46,9 @@ public class News {
         tags = "";
     }
 
-    public News(Integer id, String categoryName, String title, String content, String author, Long createdAt, int visits, String tags) {
+    public News(Integer id, Integer categoryId, String title, String content, String author, Long createdAt, int visits, String tags) {
         this.id = id;
-        this.categoryName = categoryName;
+        this.categoryId = categoryId;
         this.title = title;
         this.content = content;
         this.author = author;
@@ -65,12 +65,12 @@ public class News {
         this.id = id;
     }
 
-    public String getCategoryName() {
-        return categoryName;
+    public Integer getCategoryId() {
+        return categoryId;
     }
 
-    public void setCategoryName(String categoryName) {
-        this.categoryName = categoryName;
+    public void setCategoryId(Integer categoryId) {
+        this.categoryId = categoryId;
     }
 
     public String getTitle() {

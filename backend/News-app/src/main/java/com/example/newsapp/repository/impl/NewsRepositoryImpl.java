@@ -30,14 +30,14 @@ public class NewsRepositoryImpl extends MySqlAbstractRepository implements NewsR
             connection = this.newConnection();
             String[] generatedColumns = {"id"};
 
-            preparedStatement = connection.prepareStatement("INSERT INTO news (category_name, title, content, author, created_at, visits, tags) VALUES(?, ?, ?, ?, ?, ?, ?)", generatedColumns);
-            preparedStatement.setString(1, news.getCategoryName());
+            preparedStatement = connection.prepareStatement("INSERT INTO news (category_id, title, content, author, created_at, visits, tags) VALUES(?, ?, ?, ?, ?, ?, ?)", generatedColumns);
+            preparedStatement.setInt(1, news.getCategoryId());
             preparedStatement.setString(2, news.getTitle());
             preparedStatement.setString(3, news.getContent());
             preparedStatement.setString(4, news.getAuthor());
             preparedStatement.setLong(5, news.getCreatedAt());
             preparedStatement.setInt(6, news.getVisits());
-            preparedStatement.setString(7, news.getTags());
+            preparedStatement.setString(7, Utility.prettyTags(news.getTags()));
             preparedStatement.executeUpdate();
             resultSet = preparedStatement.getGeneratedKeys();
 
@@ -75,9 +75,9 @@ public class NewsRepositoryImpl extends MySqlAbstractRepository implements NewsR
         int idx = 1;
         Map<String, Integer> indexes = new HashMap<>();
         StringBuilder sb = new StringBuilder("UPDATE news SET ");
-        if(Utility.notNullAndEmpty(updatedNews.getCategoryName())) {
-            sb.append(" category_name=?,");
-            indexes.put("category_name", idx++);
+        if(updatedNews.getCategoryId() != null) {
+            sb.append(" category_id=?,");
+            indexes.put("category_id", idx++);
         }
         if(Utility.notNullAndEmpty(updatedNews.getTitle())) {
             sb.append(" title=?,");
@@ -109,11 +109,11 @@ public class NewsRepositoryImpl extends MySqlAbstractRepository implements NewsR
             System.out.println("QUERY: " + sb);
             preparedStatement = connection.prepareStatement(sb.toString());
 
-            if(sb.toString().contains("category_name=?")) { preparedStatement.setString(indexes.get("category_name"), updatedNews.getCategoryName()); }
+            if(sb.toString().contains("category_id=?")) { preparedStatement.setInt(indexes.get("category_id"), updatedNews.getCategoryId()); }
             if(sb.toString().contains("title=?")) { preparedStatement.setString(indexes.get("title"), updatedNews.getTitle()); }
             if(sb.toString().contains("content=?")) { preparedStatement.setString(indexes.get("content"), updatedNews.getContent()); }
             if(sb.toString().contains("author=?")) { preparedStatement.setString(indexes.get("author"), updatedNews.getAuthor()); }
-            if(sb.toString().contains("tags=?")) { preparedStatement.setString(indexes.get("tags"), updatedNews.getTags()); }
+            if(sb.toString().contains("tags=?")) { preparedStatement.setString(indexes.get("tags"), Utility.prettyTags(updatedNews.getTags())); }
             preparedStatement.setInt(indexes.get("id"), updatedNews.getId());
 
             int status = preparedStatement.executeUpdate();
@@ -164,7 +164,7 @@ public class NewsRepositoryImpl extends MySqlAbstractRepository implements NewsR
                 if(resultSet.next()) {
                     news = new News(
                             resultSet.getInt("id"),
-                            resultSet.getString("category_name"),
+                            resultSet.getInt("category_id"),
                             resultSet.getString("title"),
                             resultSet.getString("content"),
                             resultSet.getString("author"),
@@ -228,7 +228,7 @@ public class NewsRepositoryImpl extends MySqlAbstractRepository implements NewsR
             while(resultSet.next()){
                 news.add(new News(
                         resultSet.getInt("id"),
-                        resultSet.getString("category_name"),
+                        resultSet.getInt("category_id"),
                         resultSet.getString("title"),
                         resultSet.getString("content"),
                         resultSet.getString("author"),
@@ -262,12 +262,13 @@ public class NewsRepositoryImpl extends MySqlAbstractRepository implements NewsR
             if(resultSet.next()){
                 news = new News();
                 news.setId(resultSet.getInt("id"));
-                news.setCategoryName(resultSet.getString("category_name"));
+                news.setCategoryId(resultSet.getInt("category_id"));
                 news.setTitle(resultSet.getString("title"));
                 news.setContent(resultSet.getString("content"));
                 news.setAuthor(resultSet.getString("author"));
                 news.setCreatedAt(resultSet.getLong("created_at"));
                 news.setVisits(resultSet.getInt("visits"));
+                news.setTags(resultSet.getString("tags"));
             }
         } catch (Exception e){
             e.printStackTrace();
@@ -296,7 +297,7 @@ public class NewsRepositoryImpl extends MySqlAbstractRepository implements NewsR
             while(resultSet.next()){
                 news.add(new News(
                         resultSet.getInt("id"),
-                        resultSet.getString("category_name"),
+                        resultSet.getInt("category_id"),
                         resultSet.getString("title"),
                         resultSet.getString("content"),
                         resultSet.getString("author"),
@@ -317,7 +318,7 @@ public class NewsRepositoryImpl extends MySqlAbstractRepository implements NewsR
     }
 
     @Override
-    public List<News> findAllByCategory(String categoryName) {
+    public List<News> findAllByCategory(Integer categoryId) {
         List<News> news = new ArrayList<>();
         Connection connection = null;
         PreparedStatement preparedStatement = null;
@@ -325,19 +326,20 @@ public class NewsRepositoryImpl extends MySqlAbstractRepository implements NewsR
 
         try {
             connection = this.newConnection();
-            preparedStatement = connection.prepareStatement("SELECT * FROM news WHERE category_name = ?");
-            preparedStatement.setString(1, categoryName);
+            preparedStatement = connection.prepareStatement("SELECT * FROM news WHERE category_id = ?");
+            preparedStatement.setInt(1, categoryId);
             resultSet = preparedStatement.executeQuery();
 
             while(resultSet.next()){
                 news.add(new News(
                         resultSet.getInt("id"),
-                        resultSet.getString("category_name"),
+                        resultSet.getInt("category_id"),
                         resultSet.getString("title"),
                         resultSet.getString("content"),
                         resultSet.getString("author"),
                         resultSet.getLong("created_at"),
-                        resultSet.getInt("visits")
+                        resultSet.getInt("visits"),
+                        resultSet.getString("tags")
                 ));
             }
         } catch (Exception e){
@@ -361,19 +363,20 @@ public class NewsRepositoryImpl extends MySqlAbstractRepository implements NewsR
         try {
             connection = this.newConnection();
             preparedStatement = connection.prepareStatement("SELECT * FROM news WHERE tags LIKE ?");
-            String likePattern = "%" + tagName + "%";
+            String likePattern = "%" + tagName + " %";
             preparedStatement.setString(1, likePattern);
             resultSet = preparedStatement.executeQuery();
 
             while(resultSet.next()){
                 news.add(new News(
                         resultSet.getInt("id"),
-                        resultSet.getString("category_name"),
+                        resultSet.getInt("category_id"),
                         resultSet.getString("title"),
                         resultSet.getString("content"),
                         resultSet.getString("author"),
                         resultSet.getLong("created_at"),
-                        resultSet.getInt("visits")
+                        resultSet.getInt("visits"),
+                        resultSet.getString("tags")
                 ));
             }
         } catch (Exception e){

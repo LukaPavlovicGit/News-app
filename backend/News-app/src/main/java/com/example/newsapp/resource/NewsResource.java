@@ -43,9 +43,9 @@ public class NewsResource {
     public List<News> getMostRead(){ return newsService.mostRead(); }
 
     @GET
-    @Path("/by-category/{categoryName}")
+    @Path("/by-category/{categoryId}")
     @Produces(MediaType.APPLICATION_JSON)
-    public List<News> getByCategoryName(@PathParam("categoryName") String categoryName){ return newsService.findAllByCategory(categoryName); }
+    public List<News> getByCategoryName(@PathParam("categoryId") Integer categoryId){ return newsService.findAllByCategory(categoryId); }
 
     @GET
     @Path("/by-tag/{tagName}")

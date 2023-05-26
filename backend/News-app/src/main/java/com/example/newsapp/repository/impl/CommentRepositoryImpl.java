@@ -70,14 +70,11 @@ public class CommentRepositoryImpl extends MySqlAbstractRepository implements Co
         sb.deleteCharAt(sb.length() - 1);
         sb.append(" WHERE id=?");
         indexes.put("id", idx);
-
         try {
             if(sb.toString().equals( "UPDATE comments SET WHERE id=?")){
                 throw new SQLException("Nothing to update...");
             }
-
             connection = this.newConnection();
-
             preparedStatement = connection.prepareStatement(sb.toString());
 
             if(sb.toString().contains("author=?")) { preparedStatement.setString(indexes.get("author"), comment.getAuthor()); }
@@ -88,7 +85,6 @@ public class CommentRepositoryImpl extends MySqlAbstractRepository implements Co
             if(status == 0){
                 comment = null;
             }
-
         } catch (SQLException e) {
             e.printStackTrace();
         } finally {
@@ -104,21 +100,19 @@ public class CommentRepositoryImpl extends MySqlAbstractRepository implements Co
         Comment comment = null;
         Connection connection = null;
         PreparedStatement preparedStatement = null;
-        ResultSet resultSet = null;
         try {
             connection = this.newConnection();
             preparedStatement = connection.prepareStatement("DELETE FROM comments WHERE id = ?");
             preparedStatement.setInt(1, id);
+
             int status = preparedStatement.executeUpdate();
             if(status == 1){
                 comment = new Comment(id);
             }
-
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
             this.closeStatement(preparedStatement);
-            this.closeResultSet(resultSet);
             this.closeConnection(connection);
         }
 

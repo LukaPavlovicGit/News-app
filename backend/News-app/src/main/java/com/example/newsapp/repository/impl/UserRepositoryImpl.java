@@ -130,7 +130,8 @@ public class UserRepositoryImpl extends MySqlAbstractRepository implements UserR
             preparedStatement = connection.prepareStatement("UPDATE users SET status=? WHERE id=?");
             preparedStatement.setBoolean(1, true);
             preparedStatement.setInt(2, userId);
-            preparedStatement.executeUpdate();
+            int status = preparedStatement.executeUpdate();
+            System.out.println("STATUS: " + status);
 
         } catch (SQLException e) {
             e.printStackTrace();
@@ -150,7 +151,8 @@ public class UserRepositoryImpl extends MySqlAbstractRepository implements UserR
             preparedStatement = connection.prepareStatement("UPDATE users SET status=? WHERE id=?");
             preparedStatement.setBoolean(1, false);
             preparedStatement.setInt(2, userId);
-            preparedStatement.executeUpdate();
+            int status = preparedStatement.executeUpdate();
+            System.out.println("STATUS: " + status);
 
         } catch (SQLException e) {
             e.printStackTrace();
