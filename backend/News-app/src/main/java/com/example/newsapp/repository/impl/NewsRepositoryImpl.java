@@ -26,6 +26,7 @@ public class NewsRepositoryImpl extends MySqlAbstractRepository implements NewsR
         Connection connection = null;
         PreparedStatement preparedStatement = null;
         ResultSet resultSet = null;
+
         try {
             connection = this.newConnection();
             String[] generatedColumns = {"id"};
@@ -37,7 +38,7 @@ public class NewsRepositoryImpl extends MySqlAbstractRepository implements NewsR
             preparedStatement.setString(4, news.getAuthor());
             preparedStatement.setLong(5, news.getCreatedAt());
             preparedStatement.setInt(6, news.getVisits());
-            preparedStatement.setString(7, Utility.prettyTags(news.getTags()));
+            preparedStatement.setString(7, Utility.convertToPrettyTagsString(news.getTags()));
             preparedStatement.executeUpdate();
             resultSet = preparedStatement.getGeneratedKeys();
 
@@ -45,7 +46,7 @@ public class NewsRepositoryImpl extends MySqlAbstractRepository implements NewsR
                 news.setId(resultSet.getInt(1));
 
                 if(Utility.notNullAndEmpty(news.getTags())){
-                    String[] keywords = Utility.getKeywords(news.getTags());
+                    String[] keywords = Utility.convertToPrettyTagsArr(news.getTags());
                     for(String keyword : keywords){
                         Tag tag = tagRepository.findByKeyword(keyword);
                         if(tag == null){
@@ -104,6 +105,8 @@ public class NewsRepositoryImpl extends MySqlAbstractRepository implements NewsR
             if(sb.toString().equals( "UPDATE news SET WHERE id=?")){
                 throw new SQLException("Nothing to update...");
             }
+
+
             connection = this.newConnection();
 
             System.out.println("QUERY: " + sb);
@@ -113,14 +116,16 @@ public class NewsRepositoryImpl extends MySqlAbstractRepository implements NewsR
             if(sb.toString().contains("title=?")) { preparedStatement.setString(indexes.get("title"), updatedNews.getTitle()); }
             if(sb.toString().contains("content=?")) { preparedStatement.setString(indexes.get("content"), updatedNews.getContent()); }
             if(sb.toString().contains("author=?")) { preparedStatement.setString(indexes.get("author"), updatedNews.getAuthor()); }
-            if(sb.toString().contains("tags=?")) { preparedStatement.setString(indexes.get("tags"), Utility.prettyTags(updatedNews.getTags())); }
+            if(sb.toString().contains("tags=?")) { preparedStatement.setString(indexes.get("tags"), Utility.convertToPrettyTagsString(updatedNews.getTags())); }
             preparedStatement.setInt(indexes.get("id"), updatedNews.getId());
 
             int status = preparedStatement.executeUpdate();
             if(status == 1){
                 if(Utility.notNullAndEmpty(updatedNews.getTags())){
+
                     newsTagRepository.deleteByNewsId(updatedNews.getId());
-                    String[] keywords = Utility.getKeywords(updatedNews.getTags());
+                    String[] keywords = Utility.convertToPrettyTagsArr(updatedNews.getTags());
+
                     for(String keyword : keywords){
                         Tag tag = tagRepository.findByKeyword(keyword);
                         if(tag == null){
@@ -223,7 +228,7 @@ public class NewsRepositoryImpl extends MySqlAbstractRepository implements NewsR
         try {
             connection = this.newConnection();
             statement = connection.createStatement();
-            resultSet = statement.executeQuery("SELECT * FROM news ORDER BY visits DESC 10");
+            resultSet = statement.executeQuery("SELECT * FROM news ORDER BY visits DESC LIMIT 10");
 
             while(resultSet.next()){
                 news.add(new News(
@@ -318,7 +323,7 @@ public class NewsRepositoryImpl extends MySqlAbstractRepository implements NewsR
     }
 
     @Override
-    public List<News> findAllByCategory(Integer categoryId) {
+    public List<News> findAllByCategory(Integer categoryId, Integer page) {
         List<News> news = new ArrayList<>();
         Connection connection = null;
         PreparedStatement preparedStatement = null;
@@ -326,8 +331,9 @@ public class NewsRepositoryImpl extends MySqlAbstractRepository implements NewsR
 
         try {
             connection = this.newConnection();
-            preparedStatement = connection.prepareStatement("SELECT * FROM news WHERE category_id = ?");
+            preparedStatement = connection.prepareStatement("SELECT * FROM news WHERE category_id = ? ORDER BY created_at DESC LIMIT 10 OFFSET ?");
             preparedStatement.setInt(1, categoryId);
+            preparedStatement.setInt(2, (page - 1) * 10);
             resultSet = preparedStatement.executeQuery();
 
             while(resultSet.next()){
@@ -362,9 +368,15 @@ public class NewsRepositoryImpl extends MySqlAbstractRepository implements NewsR
 
         try {
             connection = this.newConnection();
-            preparedStatement = connection.prepareStatement("SELECT * FROM news WHERE tags LIKE ?");
-            String likePattern = "%" + tagName + " %";
-            preparedStatement.setString(1, likePattern);
+            preparedStatement = connection.prepareStatement("SELECT * FROM news WHERE tags LIKE ? OR tags LIKE ? OR tags LIKE ? OR tags LIKE ?");
+            String pattern1 = tagName + ",%";         //  VELIKO FINALE,     VELIKO FINALE A,
+            String pattern2 = "%,"+ tagName + ",%";   // ,VELIKO FINALE,    ,VELIKO FINALE A,
+            String pattern3 = "%," + tagName;         // ,VELIKO FINALE     ,VELIKO FINALE A
+            String pattern4 = tagName ;               //  VELIKO FINALE      VELIKO FINALE A
+            preparedStatement.setString(1, pattern1);
+            preparedStatement.setString(2, pattern2);
+            preparedStatement.setString(3, pattern3);
+            preparedStatement.setString(4, pattern4);
             resultSet = preparedStatement.executeQuery();
 
             while(resultSet.next()){

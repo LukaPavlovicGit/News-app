@@ -38,7 +38,7 @@ public class UserResource {
     }
 
     @POST
-    @Path("/admin/register")
+    @Path("/register")
     @Produces(MediaType.APPLICATION_JSON)
     public Response create(@Valid RegisterRequest registerRequest){
         Map<String, Object> response = new HashMap<>();
@@ -46,7 +46,8 @@ public class UserResource {
         String firstname = registerRequest.getFirstname();
         String lastname = registerRequest.getLastname();
         String password = registerRequest.getPassword();
-        User user = userService.register(registerRequest.getRole(), firstname, lastname, email, password, registerRequest.getStatus());
+        String role = registerRequest.getAdmin() ? "admin" : "content_creator";
+        User user = userService.register(role, firstname, lastname, email, password, registerRequest.getStatus());
         if(user == null){
             response.put("error", "A username is already used...");
             return Response.status(406, "Not acceptable").entity(response).build();
@@ -55,8 +56,15 @@ public class UserResource {
         return Response.ok(response).build();
     }
 
+    @GET
+    @Path("/by-id/{id}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public User getById(@PathParam("id") Integer id){
+        return userService.getById(id);
+    }
+
     @PUT
-    @Path("/admin/update/{id}")
+    @Path("/update/{id}")
     @Produces(MediaType.APPLICATION_JSON)
     public Response update(@PathParam("id") int userId, @Valid UpdateUserRequest updateUserRequest){
         Map<String, Object> response = new HashMap<>();
@@ -76,17 +84,30 @@ public class UserResource {
         return Response.ok(response).build();
     }
     @PUT
-    @Path("/admin/status-activation/{id}")
+    @Path("/status-activation/{id}")
     @Produces(MediaType.APPLICATION_JSON)
     public void statusActivation(@PathParam("id") Integer userId){ userService.statusActivation(userId); }
 
     @PUT
-    @Path("/admin/status-deactivation/{id}")
+    @Path("/status-deactivation/{id}")
     @Produces(MediaType.APPLICATION_JSON)
     public void statusDeactivation(@PathParam("id") Integer userId){ userService.statusDeactivation(userId); }
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    @Path("/admin")
-    public List<User> getAll(){ return userService.getAll(); }
+    @Path("/get-all")
+    public List<User> getAll(@QueryParam("page") Integer page){
+        return userService.getAll(page);
+    }
+
+//    @OPTIONS
+//    public Response handleOptions() {
+//        // Add necessary headers and return a response with HTTP OK status
+//        return Response.status(200)
+//                .header("Access-Control-Allow-Origin", "http://localhost:8081")
+//                .header("Access-Control-Allow-Credentials", "true")
+//                .header("Access-Control-Allow-Headers", "origin, content-type, accept, authorization")
+//                .header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS, HEAD")
+//                .build();
+//    }
 }

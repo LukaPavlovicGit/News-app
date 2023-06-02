@@ -19,7 +19,7 @@ public class RegisterRequest {
     @NotEmpty(message = "password is required")
     private String password;
 
-    private String role;
+    private boolean isAdmin;
 
     private boolean status;
 
@@ -58,12 +58,12 @@ public class RegisterRequest {
         this.lastname = lastname;
     }
 
-    public String getRole() {
-        return role;
+    public boolean getAdmin() {
+        return isAdmin;
     }
 
-    public void setRole(String role) {
-        this.role = role;
+    public void setAdmin(boolean admin) {
+        this.isAdmin = admin;
     }
 
     public boolean isStatus() {

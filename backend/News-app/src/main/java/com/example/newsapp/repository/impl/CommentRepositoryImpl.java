@@ -128,7 +128,7 @@ public class CommentRepositoryImpl extends MySqlAbstractRepository implements Co
 
         try {
             connection = this.newConnection();
-            preparedStatement = connection.prepareStatement("SELECT * FROM comments WHERE news_id = ?");
+            preparedStatement = connection.prepareStatement("SELECT * FROM comments WHERE news_id = ? ORDER BY created_at DESC");
             preparedStatement.setInt(1, newsId);
             resultSet = preparedStatement.executeQuery();
 

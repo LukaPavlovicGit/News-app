@@ -5,8 +5,8 @@ import javax.validation.constraints.NotNull;
 
 public class Comment {
     private Integer id;
-    @NotNull(message = "author field is required")
-    @NotEmpty(message = "author field is required")
+    @NotNull(message = "newsId field is required")
+    @NotEmpty(message = "newsId field is required")
     private Integer newsId;
     @NotNull(message = "author field is required")
     @NotEmpty(message = "author field is required")
@@ -19,19 +19,6 @@ public class Comment {
 
     public Comment() {  }
     public Comment(Integer id) { this.id = id; }
-
-    public Comment(String author, String content, Long createdAt) {
-        this.author = author;
-        this.content = content;
-        this.createdAt = createdAt;
-    }
-
-    public Comment(Integer id, Integer newsId, String author, String content) {
-        this.id = id;
-        this.newsId = newsId;
-        this.author = author;
-        this.content = content;
-    }
 
     public Comment(Integer id, Integer newsId, String author, String content, Long createdAt) {
         this.id = id;
@@ -79,5 +66,16 @@ public class Comment {
 
     public void setCreatedAt(Long createdAt) {
         this.createdAt = createdAt;
+    }
+
+    @Override
+    public String toString() {
+        return "Comment{" +
+                "id=" + id +
+                ", newsId=" + newsId +
+                ", author='" + author + '\'' +
+                ", content='" + content + '\'' +
+                ", createdAt=" + createdAt +
+                '}';
     }
 }

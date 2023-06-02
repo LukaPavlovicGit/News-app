@@ -17,21 +17,23 @@ public class CategoryResource {
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public List<Category> getAll(){ return categoryService.getAll();  }
-
+    public List<Category> getAll(@QueryParam("page") Integer page){ return categoryService.getAll(page); }
+    @GET
+    @Path("/by-id/{id}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Category getById(@PathParam("id") Integer id){ return categoryService.getById(id); }
     @POST
-    @Path("/content-creator")
     @Produces(MediaType.APPLICATION_JSON)
     public Category create(@Valid Category category){ return categoryService.insert(category); }
     @PUT
-    @Path("/content-creator/{id}")
+    @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
     public Category update(@PathParam("id") Integer id, Category category){
         category.setId(id);
         return categoryService.update(category);
     }
     @DELETE
-    @Path("/content-creator/{id}")
+    @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
     public Category delete(@PathParam("id") Integer id) {return categoryService.delete(id); }
 }

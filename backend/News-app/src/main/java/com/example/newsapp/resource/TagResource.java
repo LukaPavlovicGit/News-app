@@ -14,7 +14,7 @@ public class TagResource {
     private TagService tagService;
 
     @POST
-    @Path("/content-creator")
+    @Path("/create")
     @Produces(MediaType.APPLICATION_JSON)
     public Tag insert(Tag tag){ return tagService.insert(tag); }
 

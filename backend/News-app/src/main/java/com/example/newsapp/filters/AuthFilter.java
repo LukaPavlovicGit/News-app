@@ -19,10 +19,10 @@ public class AuthFilter implements ContainerRequestFilter {
 
     @Override
     public void filter(ContainerRequestContext requestContext) throws IOException {
+        System.out.println(requestContext.getRequest().getMethod() + " " + requestContext.getUriInfo().getPath() + " " + requestContext.getHeaderString("Authorization"));
 
-
-
-        if(requestContext.getUriInfo().getPath().contains("login")){
+        if(requestContext.getUriInfo().getPath().contains("login") ||
+            requestContext.getRequest().getMethod().equals("OPTIONS")){
             return;
         }
 
@@ -45,17 +45,22 @@ public class AuthFilter implements ContainerRequestFilter {
     }
 
     private boolean isAuthenticationRequired(ContainerRequestContext req){
-        if (req.getUriInfo().getPath().contains("content-creator")) {
-            return true;
-        }
-        return false;
+        return req.getRequest().getMethod().equals("POST") && req.getUriInfo().getPath().equals("news") ||
+               req.getRequest().getMethod().equals("PUT") && req.getUriInfo().getPath().equals("news/update") ||
+               req.getRequest().getMethod().equals("DELETE") && req.getUriInfo().getPath().contains("news") ||
+               req.getRequest().getMethod().equals("POST") && req.getUriInfo().getPath().equals("categories") ||
+               req.getRequest().getMethod().equals("GET") && req.getUriInfo().getPath().contains("categories/by-id") ||
+               req.getRequest().getMethod().equals("PUT") && req.getUriInfo().getPath().contains("categories") ||
+               req.getRequest().getMethod().equals("DELETE") && req.getUriInfo().getPath().contains("categories");
     }
 
     private boolean isAuthorizationRequired(ContainerRequestContext req) {
-        if (req.getUriInfo().getPath().contains("admin")) {
-            return true;
-        }
-        return false;
+        return req.getUriInfo().getPath().contains("users/register") ||
+               req.getUriInfo().getPath().contains("users/update") ||
+               req.getRequest().getMethod().equals("GET") && req.getUriInfo().getPath().contains("users/by-id") ||
+               req.getUriInfo().getPath().contains("users/status-activation") ||
+               req.getUriInfo().getPath().contains("users/status-deactivation") ||
+               req.getUriInfo().getPath().contains("users/get-all");
     }
 
 //    private boolean isAuthenticationRequired(ContainerRequestContext req) {

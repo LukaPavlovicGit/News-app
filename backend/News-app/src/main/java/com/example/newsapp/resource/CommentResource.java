@@ -17,7 +17,10 @@ public class CommentResource {
 
     @POST
     @Produces(MediaType.APPLICATION_JSON)
-    public Comment create(@Valid Comment comment){ return commentService.insert(comment); }
+    public Comment create(@Valid Comment comment){
+        System.out.println(comment);
+        return commentService.insert(comment);
+    }
 
     @PUT
     @Path("/{id}")

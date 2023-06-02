@@ -15,12 +15,11 @@ public class NewsResource {
     private NewsService newsService;
 
     @POST
-    @Path("/content-creator")
     @Produces(MediaType.APPLICATION_JSON)
     public News create(@Valid News news){ return newsService.insert(news); }
 
     @PUT
-    @Path("/content-creator/{id}")
+    @Path("/update/{id}")
     @Produces(MediaType.APPLICATION_JSON)
     public News update(@PathParam("id") Integer id, News news){
         news.setId(id);
@@ -33,7 +32,7 @@ public class NewsResource {
     public News visited(@PathParam("newsId") Integer newsId){ return newsService.newsVisited(newsId); }
 
     @DELETE
-    @Path("/content-creator/{id}")
+    @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
     public News delete(@PathParam("id") Integer id){ return newsService.delete(id); }
 
@@ -45,7 +44,7 @@ public class NewsResource {
     @GET
     @Path("/by-category/{categoryId}")
     @Produces(MediaType.APPLICATION_JSON)
-    public List<News> getByCategoryName(@PathParam("categoryId") Integer categoryId){ return newsService.findAllByCategory(categoryId); }
+    public List<News> getByCategoryName(@PathParam("categoryId") Integer categoryId, @QueryParam("page") Integer page){ return newsService.findAllByCategory(categoryId, page); }
 
     @GET
     @Path("/by-tag/{tagName}")

@@ -15,16 +15,18 @@ import java.util.Map;
 public class CategoryRepositoryImpl extends MySqlAbstractRepository implements CategoryRepository {
 
     @Override
-    public List<Category> getAll() {
+    public List<Category> getAll(Integer page) {
         List<Category> categories = new ArrayList<>();
         Connection connection = null;
-        Statement statement = null;
+        PreparedStatement preparedStatement = null;
         ResultSet resultSet = null;
 
         try {
             connection = this.newConnection();
-            statement = connection.createStatement();
-            resultSet = statement.executeQuery("SELECT * FROM categories");
+            preparedStatement = connection.prepareStatement("SELECT * FROM categories LIMIT 10 OFFSET ?");
+            preparedStatement.setInt(1, (page - 1) * 10);
+            resultSet = preparedStatement.executeQuery();
+
             while(resultSet.next()){
                 categories.add(new Category(
                         resultSet.getInt("id"),
@@ -35,12 +37,42 @@ public class CategoryRepositoryImpl extends MySqlAbstractRepository implements C
         } catch (Exception e){
             e.printStackTrace();
         } finally {
-            this.closeStatement(statement);
+            this.closeStatement(preparedStatement);
             this.closeResultSet(resultSet);
             this.closeConnection(connection);
         }
 
         return categories;
+    }
+
+    @Override
+    public Category getById(Integer id) {
+        Category category = null;
+        Connection connection = null;
+        PreparedStatement preparedStatement = null;
+        ResultSet resultSet = null;
+
+        try {
+            connection = this.newConnection();
+            preparedStatement = connection.prepareStatement("SELECT * FROM categories WHERE id=?");
+            preparedStatement.setInt(1, id);
+            resultSet = preparedStatement.executeQuery();
+
+            if(resultSet.next()){
+                category = new Category(
+                        resultSet.getInt("id"),
+                        resultSet.getString("name"),
+                        resultSet.getString("description")
+                );
+            }
+        } catch (Exception e){
+            e.printStackTrace();
+        } finally {
+            this.closeStatement(preparedStatement);
+            this.closeResultSet(resultSet);
+            this.closeConnection(connection);
+        }
+        return category;
     }
 
     @Override
@@ -162,33 +194,4 @@ public class CategoryRepositoryImpl extends MySqlAbstractRepository implements C
 
         return category;
     }
-
-//    public Category findByName(String name) {
-//        Category category = new Category();
-//        Connection connection = null;
-//        PreparedStatement preparedStatement = null;
-//        ResultSet resultSet = null;
-//
-//        try {
-//            connection = this.newConnection();
-//            preparedStatement = connection.prepareStatement("SELECT * FROM categories WHERE name = ?");
-//            preparedStatement.setString(1, name);
-//            resultSet = preparedStatement.executeQuery();
-//
-//            if(resultSet.next()){
-//                category.setId(resultSet.getInt("id"));
-//                category.setName(resultSet.getString("name"));
-//                category.setDescription(resultSet.getString("description"));
-//            }
-//
-//        } catch (Exception e){
-//            e.printStackTrace();
-//        } finally {
-//            this.closeStatement(preparedStatement);
-//            this.closeResultSet(resultSet);
-//            this.closeConnection(connection);
-//        }
-//
-//        return category;
-//    }
 }

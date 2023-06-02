@@ -129,6 +129,21 @@ public class News {
         this.comments = comments;
     }
 
+    @Override
+    public String toString() {
+        return "News{" +
+                "id=" + id +
+                ", categoryId=" + categoryId +
+                ", title='" + title + '\'' +
+                ", content='" + content + '\'' +
+                ", author='" + author + '\'' +
+                ", createdAt=" + createdAt +
+                ", visits=" + visits +
+                ", tags='" + tags + '\'' +
+                ", comments=" + comments +
+                '}';
+    }
+
     private Long getLocalDateTimeLong(){
         LocalDateTime localDateTime = LocalDateTime.now();
         ZonedDateTime zdt = ZonedDateTime.of(localDateTime, ZoneId.systemDefault());

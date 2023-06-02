@@ -51,6 +51,39 @@ public class UserRepositoryImpl extends MySqlAbstractRepository implements UserR
     }
 
     @Override
+    public User getById(Integer id) {
+        User user = null;
+        Connection connection = null;
+        PreparedStatement preparedStatement = null;
+        ResultSet resultSet = null;
+        try {
+            connection = this.newConnection();
+            preparedStatement = connection.prepareStatement("SELECT * FROM users WHERE id=?");
+            preparedStatement.setInt(1, id);
+            resultSet = preparedStatement.executeQuery();
+
+            if(resultSet.next()){
+                user = new User(
+                        resultSet.getInt("id"),
+                        resultSet.getString("role"),
+                        resultSet.getString("firstname"),
+                        resultSet.getString("lastname"),
+                        resultSet.getString("email"),
+                        resultSet.getBoolean("status")
+                );
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            this.closeStatement(preparedStatement);
+            this.closeConnection(connection);
+            this.closeResultSet(resultSet);
+        }
+        return user;
+    }
+
+    @Override
     public User update(User user) {
         Connection connection = null;
         PreparedStatement preparedStatement = null;
@@ -163,16 +196,18 @@ public class UserRepositoryImpl extends MySqlAbstractRepository implements UserR
     }
 
     @Override
-    public List<User> getAll(){
+    public List<User> getAll(Integer page){
         List<User> users = new ArrayList<>();
         Connection connection = null;
-        Statement statement = null;
+        PreparedStatement preparedStatement = null;
         ResultSet resultSet = null;
 
         try {
             connection = this.newConnection();
-            statement = connection.createStatement();
-            resultSet = statement.executeQuery("SELECT * FROM users");
+            preparedStatement = connection.prepareStatement("SELECT * FROM users LIMIT 10 OFFSET ?");
+            preparedStatement.setInt(1, (page - 1) * 10);
+            resultSet = preparedStatement.executeQuery();
+
             while(resultSet.next()){
                 users.add(new User(
                         resultSet.getInt("id"),
@@ -187,7 +222,7 @@ public class UserRepositoryImpl extends MySqlAbstractRepository implements UserR
         } catch (Exception e){
             e.printStackTrace();
         } finally {
-            this.closeStatement(statement);
+            this.closeStatement(preparedStatement);
             this.closeResultSet(resultSet);
             this.closeConnection(connection);
         }

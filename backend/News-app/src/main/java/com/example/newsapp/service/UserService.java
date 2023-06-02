@@ -55,6 +55,10 @@ public class UserService {
         return userRepository.insert(user);
     }
 
+    public User getById(Integer id){
+        return userRepository.getById(id);
+    }
+
     public User update(Integer id, String role, String firstname, String lastname, String email, String password, Boolean status){
         User user = new User(id, role, firstname, lastname, email, password == null ? null : DigestUtils.sha256Hex(password), status);
         return userRepository.update(user);
@@ -68,7 +72,7 @@ public class UserService {
         userRepository.statusDeactivation(userId);
     }
 
-    public List<User> getAll(){ return userRepository.getAll(); }
+    public List<User> getAll(Integer page){ return userRepository.getAll(page); }
 
     public boolean isAuthenticated(String token){
         Algorithm algorithm = Algorithm.HMAC256("secret");
@@ -79,11 +83,7 @@ public class UserService {
 
         User user = this.userRepository.findByEmail(email);
 
-        if (user == null){
-            return false;
-        }
-
-        return true;
+        return user != null;
     }
 
     public boolean isAuthorized(String token){
@@ -96,10 +96,6 @@ public class UserService {
 
         User user = this.userRepository.findByEmail(email);
 
-        if (user == null || !Objects.equals(role, "admin")){
-            return false;
-        }
-
-        return true;
+        return user != null && Objects.equals(role, "admin");
     }
 }
