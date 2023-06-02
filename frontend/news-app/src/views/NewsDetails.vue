@@ -68,7 +68,7 @@
 
 <script>
 export default {
-    name: "NewsDetailsView",
+    name: "NewsDetails",
 
     data() {
         return {
@@ -80,7 +80,7 @@ export default {
         }
     },
     mounted() {
-        this.$axios.put(`news/visited/${this.$route.params.id}`).then((response) => {
+        this.$axios.put(`/api/news/visited/${this.$route.params.id}`).then((response) => {
             this.news = response.data
             this.news.tags = response.data.tags.split(",").map(function(item) { return item.trim(); });
         });
@@ -90,11 +90,11 @@ export default {
     },
     methods: {
         postComment(){
-            this.$axios.post(`comments`, {
-                "newsId": this.news.newsId,
+            this.$axios.post(`/api/comments`, {
+                "newsId": this.news.id,
                 "author": this.commentAuthor,
                 "content": this.commentContent,
-                "createdAt": new Date()
+                "createdAt": Date.now()
             }).then(() => {
                 window.location.reload();
             });

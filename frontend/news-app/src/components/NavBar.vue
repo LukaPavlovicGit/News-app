@@ -9,10 +9,7 @@
             <div class="collapse navbar-collapse" id="navbarSupportedContent">
                 <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                   <li class="nav-item">
-                      <router-link :to="{name: 'News'}" tag="a" class="nav-link" :class="{active: this.$router.currentRoute.name === 'News'}">News</router-link>
-                  </li>
-                  <li class="nav-item">
-                      <router-link :to="{name: 'Recent'}" tag="a" class="nav-link" :class="{active: this.$router.currentRoute.name === 'Recent'}">Recent</router-link>
+                      <router-link :to="{name: 'All-News'}" tag="a" class="nav-link" :class="{active: this.$router.currentRoute.name === 'News'}">News</router-link>
                   </li>
                   <li class="nav-item">
                       <router-link :to="{name: 'Popular'}" tag="a" class="nav-link" :class="{active: this.$router.currentRoute.name === 'Popular'}">Popular</router-link>
@@ -20,9 +17,12 @@
                   <li class="nav-item">
                       <router-link :to="{name: 'SearchNews'}" tag="a" class="nav-link" :class="{active: this.$router.currentRoute.name === 'SearchNews'}">Search</router-link>
                   </li>
-                  <b-dropdown text="Categories"   variant="secondary" class="e-auto mb-2 mb-lg-0" style="height: 35px; margin-top: 5px">
-                      <b-dropdown-item href="#"  v-for="category in categories" :key="category.name"  @click="find(category.categoryId)">{{category.name}}</b-dropdown-item>
+                  <b-dropdown text="Categories" variant="secondary" class="e-auto mb-2 mb-lg-0" style="height: 35px; margin-top: 5px">
+                      <b-dropdown-item href="#" v-for="category in categories" :key="category.name"  @click="getNewsByCategory(category.id)">{{category.name}}</b-dropdown-item>
                   </b-dropdown>
+                  <li v-if="canLogin" class="nav-item">
+                      <router-link :to="{name: 'Login'}" tag="a" class="nav-link" :class="{active: this.$router.currentRoute.name === 'Login'}">Login</router-link>
+                  </li>
                   <li v-if="canLogout" class="nav-item">
                       <router-link :to="{name: 'CreateNews'}" tag="a" class="nav-link" :class="{active: this.$router.currentRoute.name === 'CreateNews'}">News CMS</router-link>
                   </li>
@@ -48,6 +48,9 @@ import jwtDecode from "jwt-decode";
 export default {
     name: "NavBar",
     computed: {
+        canLogin() {
+            return localStorage.getItem('jwt') == null || localStorage.getItem('jwt') === '';
+        },
         canLogout() {
             return this.$route.name !== 'Login' && localStorage.getItem('jwt') != null;
         },
@@ -57,7 +60,7 @@ export default {
                 return false;
 
             const decoded = jwtDecode(jwt);
-            return decoded.isAdmin;
+            return decoded.role === 'admin';
         }
     },
     data() {
@@ -67,7 +70,7 @@ export default {
         }
     },
     mounted() {
-        this.$axios.get('categories?page=1').then((response) => {
+        this.$axios.get('/api/categories?page=1').then((response) => {
             this.categories = response.data;
         });
     },
@@ -76,8 +79,8 @@ export default {
             localStorage.removeItem('jwt');
             this.$router.push({name: 'Login'});
         },
-        find(id) {
-            this.$router.push(`/news/category/${id}`).then(() => {
+        getNewsByCategory(id) {
+            this.$router.push(`/news/by-category/${id}`).then(() => {
                 window.location.reload();
             });
         }

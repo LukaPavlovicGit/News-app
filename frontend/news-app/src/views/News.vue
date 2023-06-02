@@ -16,13 +16,13 @@
 
                     <tbody >
 
-                    <tr v-for="news in newsList" :key="news.newsId" @click="find(news.newsId)">
+                    <tr v-for="news in newsList" :key="news.id" @click="find(news.id)">
 
                         <b-card style="margin-top: 10px">
                             <td scope="row"> {{ news.title }}</td>
                         </b-card>
 
-                        <td>{{new Date(news.created).toISOString() }}</td>
+                        <td>{{(new Date(news.createdAt)).toLocaleDateString("en-us", { weekday: "long", year: "numeric", month: "short", day: "numeric",}) }}</td>
                         <td>{{ news.content | shortText }}</td>
 
                     </tr>
@@ -52,15 +52,15 @@ export default {
             newsList: []
         }
     },
-    methods: {
-        find(id) {
-            this.$router.push(`/news/${id}`);
-        }
-    },
     mounted() {
-        this.$axios.get('news/all?page=1').then((response) => {
+        this.$axios.get('/api/news?page=1').then((response) => {
             this.newsList = response.data;
         });
+    },
+    methods: {
+        find(id) {
+            this.$router.push(`/news/single-news-view/${id}`);
+        }
     }
 }
 </script>
