@@ -49,7 +49,7 @@ public class NewsResource {
     @GET
     @Path("/by-tag/{tagName}")
     @Produces(MediaType.APPLICATION_JSON)
-    public List<News> getByTagName(@PathParam("tagName") String tagName){ return newsService.findAllByTag(tagName); }
+    public List<News> getByTagName(@PathParam("tagName") String tagName, @QueryParam("page") int page){ return newsService.findAllByTag(tagName, page); }
 
     @GET
     @Path("/{id}")

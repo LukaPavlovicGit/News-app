@@ -360,7 +360,7 @@ public class NewsRepositoryImpl extends MySqlAbstractRepository implements NewsR
     }
 
     @Override
-    public List<News> findAllByTag(String tagName) {
+    public List<News> findAllByTag(String tagName, Integer page) {
         List<News> news = new ArrayList<>();
         Connection connection = null;
         PreparedStatement preparedStatement = null;
@@ -368,7 +368,7 @@ public class NewsRepositoryImpl extends MySqlAbstractRepository implements NewsR
 
         try {
             connection = this.newConnection();
-            preparedStatement = connection.prepareStatement("SELECT * FROM news WHERE tags LIKE ? OR tags LIKE ? OR tags LIKE ? OR tags LIKE ?");
+            preparedStatement = connection.prepareStatement("SELECT * FROM news WHERE tags LIKE ? OR tags LIKE ? OR tags LIKE ? OR tags LIKE ? ORDER BY created_at DESC LIMIT 10 OFFSET ?");
             String pattern1 = tagName + ",%";         //  VELIKO FINALE,     VELIKO FINALE A,
             String pattern2 = "%,"+ tagName + ",%";   // ,VELIKO FINALE,    ,VELIKO FINALE A,
             String pattern3 = "%," + tagName;         // ,VELIKO FINALE     ,VELIKO FINALE A
@@ -377,6 +377,7 @@ public class NewsRepositoryImpl extends MySqlAbstractRepository implements NewsR
             preparedStatement.setString(2, pattern2);
             preparedStatement.setString(3, pattern3);
             preparedStatement.setString(4, pattern4);
+            preparedStatement.setInt(5, (page - 1) * 10);
             resultSet = preparedStatement.executeQuery();
 
             while(resultSet.next()){

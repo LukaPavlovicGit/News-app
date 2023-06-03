@@ -3,6 +3,7 @@ package com.example.newsapp.repository.impl;
 import com.example.newsapp.entities.Category;
 import com.example.newsapp.entities.Tag;
 import com.example.newsapp.entities.User;
+import com.example.newsapp.exceptions.UniqueEmailException;
 import com.example.newsapp.repository.CategoryRepository;
 import com.example.newsapp.repository.UserRepository;
 import com.example.newsapp.repository.mysqlAbstract.MySqlAbstractRepository;
@@ -16,7 +17,7 @@ import java.util.Map;
 
 public class UserRepositoryImpl extends MySqlAbstractRepository implements UserRepository {
     @Override
-    public User insert(User user) {
+    public User insert(User user) throws UniqueEmailException {
         Connection connection = null;
         PreparedStatement preparedStatement = null;
         ResultSet resultSet = null;
@@ -39,8 +40,11 @@ public class UserRepositoryImpl extends MySqlAbstractRepository implements UserR
             }
 
         } catch (SQLException e) {
-            System.out.println("EXCEPTION: " +  e.getClass());
-            e.printStackTrace();
+            if(e instanceof SQLIntegrityConstraintViolationException){
+                if(e.getMessage().contains("'users.unique_email'")){
+                    throw new UniqueEmailException();
+                }
+            }
         } finally {
             this.closeStatement(preparedStatement);
             this.closeConnection(connection);

@@ -12,7 +12,7 @@ public interface NewsRepository {
     News delete(Integer id);
     List<News> mostRead();
     List<News> findAllByCategory(Integer categoryId, Integer page);
-    List<News> findAllByTag(String tagName);
+    List<News> findAllByTag(String tagName, Integer page);
     News findById(Integer id);
     List<News> findAll(int page);
 

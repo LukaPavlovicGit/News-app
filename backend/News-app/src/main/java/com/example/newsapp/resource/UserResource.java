@@ -1,6 +1,7 @@
 package com.example.newsapp.resource;
 
 import com.example.newsapp.entities.User;
+import com.example.newsapp.exceptions.UniqueEmailException;
 import com.example.newsapp.requests.LoginRequest;
 import com.example.newsapp.requests.RegisterRequest;
 import com.example.newsapp.requests.UpdateUserRequest;
@@ -46,10 +47,11 @@ public class UserResource {
         String firstname = registerRequest.getFirstname();
         String lastname = registerRequest.getLastname();
         String password = registerRequest.getPassword();
-        String role = registerRequest.getAdmin() ? "admin" : "content_creator";
-        User user = userService.register(role, firstname, lastname, email, password, registerRequest.getStatus());
-        if(user == null){
-            response.put("error", "A username is already used...");
+        String role = registerRequest.getIsAdmin() ? "admin" : "content_creator";
+        try {
+            userService.register(role, firstname, lastname, email, password, registerRequest.getStatus());
+        } catch (UniqueEmailException e) {
+            response.put("error", e.getMessage());
             return Response.status(406, "Not acceptable").entity(response).build();
         }
         response.put("message", "User registration Successful");
@@ -77,7 +79,7 @@ public class UserResource {
         Boolean status = updateUserRequest.getStatus();
         User user = userService.update(id, role, firstname, lastname, email, password, status);
         if(user == null){
-            response.put("error", "A username is already used...");
+            response.put("error", "The email is already used...");
             return Response.status(406, "Not acceptable").entity(response).build();
         }
         response.put("message", "User update Successful");
@@ -100,14 +102,4 @@ public class UserResource {
         return userService.getAll(page);
     }
 
-//    @OPTIONS
-//    public Response handleOptions() {
-//        // Add necessary headers and return a response with HTTP OK status
-//        return Response.status(200)
-//                .header("Access-Control-Allow-Origin", "http://localhost:8081")
-//                .header("Access-Control-Allow-Credentials", "true")
-//                .header("Access-Control-Allow-Headers", "origin, content-type, accept, authorization")
-//                .header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS, HEAD")
-//                .build();
-//    }
 }

@@ -58,12 +58,12 @@ public class RegisterRequest {
         this.lastname = lastname;
     }
 
-    public boolean getAdmin() {
+    public boolean getIsAdmin() {
         return isAdmin;
     }
 
-    public void setAdmin(boolean admin) {
-        this.isAdmin = admin;
+    public void setIsAdmin(boolean isAdmin) {
+        this.isAdmin = isAdmin;
     }
 
     public boolean isStatus() {

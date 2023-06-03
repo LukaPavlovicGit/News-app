@@ -1,6 +1,7 @@
 package com.example.newsapp.service;
 
 import com.example.newsapp.entities.User;
+import com.example.newsapp.exceptions.UniqueEmailException;
 import com.example.newsapp.repository.UserRepository;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
@@ -44,7 +45,7 @@ public class UserService {
                 .sign(algorithm);
     }
 
-    public User register(String role, String firstname, String lastname, String email, String password, boolean status){
+    public void register(String role, String firstname, String lastname, String email, String password, boolean status) throws UniqueEmailException {
         User user = new User();
         user.setFirstname(firstname);
         user.setLastname(lastname);
@@ -52,7 +53,7 @@ public class UserService {
         user.setEmail(email);
         user.setHashedPassword(DigestUtils.sha256Hex(password));
         user.setStatus(status);
-        return userRepository.insert(user);
+        userRepository.insert(user);
     }
 
     public User getById(Integer id){
@@ -95,7 +96,6 @@ public class UserService {
         String role = jwt.getClaim("role").asString();
 
         User user = this.userRepository.findByEmail(email);
-
         return user != null && Objects.equals(role, "admin");
     }
 }
