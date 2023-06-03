@@ -13,23 +13,21 @@
                         <th scope="col">Content</th>
                     </tr>
                     </thead>
-
                     <tbody >
-
                     <tr v-for="news in newsList" :key="news.id" @click="find(news.id)">
-
                         <b-card style="margin-top: 10px">
                             <td scope="row"> {{ news.title }}</td>
                         </b-card>
-
                         <td>{{(new Date(news.createdAt)).toLocaleDateString("en-us", { weekday: "long", year: "numeric", month: "short", day: "numeric",}) }}</td>
                         <td>{{ news.content | shortText }}</td>
-
                     </tr>
-
                     </tbody>
-
                 </table>
+                <ul class="pagination">
+                    <li class="page-item"><a class="page-link" @click = "getPrevPageOfNews">Previous</a></li>
+                    <li class="page-item"><a class="page-link">                      {{ this.pageNum }}</a></li>
+                    <li class="page-item"><a class="page-link" @click = "getNextPageOfNews" >Next</a></li>
+                </ul>
             </div>
         </div>
     </div>
@@ -49,7 +47,8 @@ export default {
     data() {
         return {
             selectedNews: null,
-            newsList: []
+            newsList: [],
+            pageNum: 1
         }
     },
     mounted() {
@@ -60,6 +59,21 @@ export default {
     methods: {
         find(id) {
             this.$router.push(`/news/single-news-view/${id}`);
+        },
+        getNextPageOfNews(){
+            this.pageNum++
+            this.$axios.get(`/api/news?page=${this.pageNum}`).then((response) => {
+                this.newsList = response.data;
+            });
+        },
+        getPrevPageOfNews(){
+            if(this.pageNum === 1){
+                return
+            }
+            this.pageNum--
+            this.$axios.get(`/api/news?page=${this.pageNum}`).then((response) => {
+                this.newsList = response.data;
+            });
         }
     }
 }

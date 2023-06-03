@@ -72,6 +72,12 @@ export default {
       window.location.reload()
     },
     postCategory(){
+
+      if(!this.validateInputs()){
+          alert('invalid inputs')
+          return
+      }
+
       this.$axios.post('/api/categories', {
         "name": this.name,
         "description": this.description
@@ -81,6 +87,9 @@ export default {
     },
     findNewsByCategory(id) {
       this.$router.push(`/news/by-category/${id}`);
+    },
+    validateInputs(){
+        return this.name && this.description && this.name !== '' && this.description !== ''
     }
   }
 }

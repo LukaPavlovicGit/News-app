@@ -109,8 +109,14 @@ export default {
     },
     postNews(){
       const jwt = localStorage.getItem('jwt');
-      if (jwt === null)
-        return;
+      if (jwt === null){
+          return
+      }
+
+      if(!this.validateInputs()){
+          alert('invalid inputs')
+          return
+      }
 
       const decoded = jwt_decode(jwt);
 
@@ -126,6 +132,10 @@ export default {
         window.location.reload();
       });
     },
+
+    validateInputs(){
+        return this.selectedCategory && this.title && this.content && this.title !== '' && this.content !== ''
+    }
   }
 }
 </script>

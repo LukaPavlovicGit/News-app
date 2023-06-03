@@ -124,8 +124,15 @@ export default {
       this.$router.push(`/user/update/${id}`);
     },
     postUser() {
-    if (this.password !== this.confirmPassword)
+      if (this.password !== this.confirmPassword){
+        alert('passwords does not match')
         return;
+      }
+
+      if(!this.validateInputs()){
+        alert('invalid inputs')
+        return
+      }
 
       this.$axios.post('/api/users/register', {
         "firstname": this.firstname,
@@ -135,8 +142,10 @@ export default {
         "isAdmin": this.isAdmin === 'true' || this.isAdmin === '1',
         "status": this.status === 'true' || this.status === '1'
 
-      }).then(() => { //{ headers: {  mode: 'cors' }}
-        window.location.reload()
+      }).then(() => {
+          window.location.reload()
+      }).catch(() => {
+          alert("Email je zauzet")
       })
     },
     userActivation(id){
@@ -148,9 +157,16 @@ export default {
         this.$axios.put(`/api/users/status-deactivation/${id}`).then(() => {
             window.location.reload()
         })
+    },
+    validateInputs(){
+      return this.firstname && this.lastname && this.email && this.password && this.firstname !== '' && this.lastname !== '' && this.email !== '' && this.password !== ''
     }
   }
 }
+
+
+
+
 </script>
 
 <style scoped>
