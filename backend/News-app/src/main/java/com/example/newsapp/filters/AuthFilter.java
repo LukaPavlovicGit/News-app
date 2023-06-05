@@ -19,7 +19,8 @@ public class AuthFilter implements ContainerRequestFilter {
 
     @Override
     public void filter(ContainerRequestContext requestContext) throws IOException {
-        System.out.println(requestContext.getRequest().getMethod() + " " + requestContext.getUriInfo().getPath() + " " + requestContext.getHeaderString("Authorization"));
+
+//        System.out.println(requestContext.getRequest().getMethod() + " " + requestContext.getUriInfo().getPath() + " " + requestContext.getHeaderString("Authorization"));
 
         if(requestContext.getUriInfo().getPath().contains("login") ||
             requestContext.getRequest().getMethod().equals("OPTIONS")){
@@ -62,20 +63,4 @@ public class AuthFilter implements ContainerRequestFilter {
                req.getUriInfo().getPath().contains("users/status-deactivation") ||
                req.getUriInfo().getPath().contains("users/get-all");
     }
-
-//    private boolean isAuthenticationRequired(ContainerRequestContext req) {
-//        List<Object> matchedResources = req.getUriInfo().getMatchedResources();
-//
-//        for (Object matchedResource : matchedResources) {
-//            if (    matchedResource instanceof CategoryResource ||
-//                    matchedResource instanceof CommentResource ||
-//                    matchedResource instanceof NewsResource ||
-//                    matchedResource instanceof TagResource ||
-//                    matchedResource instanceof UserResource     ){
-//                return true;
-//            }
-//        }
-//        return false;
-//    }
-
 }

@@ -21,7 +21,7 @@ public class UserService {
     public String login(String email, String password){
         String hashedPassword = DigestUtils.sha256Hex(password);
         User user = this.userRepository.findByEmail(email);
-        if (user == null || !user.getHashedPassword().equals(hashedPassword)) {
+        if (user == null  || !user.getHashedPassword().equals(hashedPassword) || !user.getStatus()) {
             return null;
         }
 
