@@ -3,28 +3,32 @@
     <form method="post" v-on:submit.prevent = "editUser()" >
       <div class="form-group">
         <label for="email">Email</label>
-        <input style="margin-top: 10px;" required  v-model="email" v-text="email" type="email" class="form-control" id="email" >
+        <input style="margin-top: 10px;"  v-model="email" v-text="email" type="email" class="form-control" id="email" >
       </div>
       <br>
       <div class="form-group">
         <label for="firstname" style="margin-top: 10px;">firstname</label>
-        <input style="margin-top: 10px;" required  v-model="firstname" v-text="firstname" type="text" class="form-control" id="firstname" placeholder="Enter firstname">
-
+        <input style="margin-top: 10px;"  v-model="firstname" v-text="firstname" type="text" class="form-control" id="firstname" placeholder="Enter firstname">
       </div>
       <br>
+        <div class="form-group">
+            <label for="email">Password</label>
+            <input style="margin-top: 10px;"  v-model="password" v-text="password" type="text" class="form-control" id="password" >
+        </div>
+        <br>
       <div class="form-group">
         <label for="lastname" style="margin-top: 10px;">Lastname</label>
-        <input style="margin-top: 10px;" required  v-model="lastname" v-text="lastname" type="text" class="form-control" id="lastname" placeholder="Enter lastname">
+        <input style="margin-top: 10px;"  v-model="lastname" v-text="lastname" type="text" class="form-control" id="lastname" placeholder="Enter lastname">
       </div>
       <br>
       <br>
       <div class="form-group">
         <label for="isAdmin" style="margin-top: 10px;">Is Admin</label>
-        <input style="margin-top: 10px;" required  v-model="isAdmin" type="number" class="form-control" id="isAdmin" placeholder="Is Admin">
+        <input style="margin-top: 10px;"  v-model="isAdmin" type="number" class="form-control" id="isAdmin" placeholder="Is Admin">
       </div>
       <div class="form-group">
           <label for="status" style="margin-top: 10px;">Status</label>
-          <input style="margin-top: 10px;" required  v-model="status" type="number" class="form-control" id="status" placeholder="status">
+          <input style="margin-top: 10px;"  v-model="status" type="number" class="form-control" id="status" placeholder="status">
       </div>
       <br>
 

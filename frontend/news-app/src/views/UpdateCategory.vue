@@ -6,11 +6,11 @@
         <form method="post" v-on:submit.prevent = "editCategory()" >
           <div class="form-group">
             <label for="name">Name</label>
-            <input style="margin-top: 10px;" required  v-model="name" v-text="name" type="text" class="form-control" id="name" placeholder="Enter name">
+            <input style="margin-top: 10px;"  v-model="name" v-text="name" type="text" class="form-control" id="name" placeholder="Enter name">
           </div>
           <div class="form-group">
             <label for="description" style="margin-top: 10px;">Description</label>
-            <input style="margin-top: 10px;" required  v-model="description" v-text="description" type="text" class="form-control" id="description" placeholder="Enter description">
+            <input style="margin-top: 10px;"  v-model="description" v-text="description" type="text" class="form-control" id="description" placeholder="Enter description">
 
           </div>
           <br>

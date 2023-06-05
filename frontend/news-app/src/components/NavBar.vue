@@ -2,7 +2,7 @@
   <div>
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
         <div class="container-fluid">
-            <a class="navbar-brand" href="#">RAF News</a>
+            <a class="navbar-brand" href="#">RAF NEWS</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
@@ -14,24 +14,32 @@
                   <li class="nav-item">
                       <router-link :to="{name: 'Popular'}" tag="a" class="nav-link" :class="{active: this.$router.currentRoute.name === 'Popular'}">Popular</router-link>
                   </li>
-                  <li class="nav-item">
-                      <router-link :to="{name: 'SearchNews'}" tag="a" class="nav-link" :class="{active: this.$router.currentRoute.name === 'SearchNews'}">Search</router-link>
-                  </li>
-                  <b-dropdown text="Categories" variant="secondary" class="e-auto mb-2 mb-lg-0" style="height: 35px; margin-top: 5px">
+                  <b-dropdown text="Categories" variant="secondary" class="e-auto mb-2 mb-lg-0 me-2" style="height: 35px; margin-top: 5px">
                       <b-dropdown-item href="#" v-for="category in categories" :key="category.name"  @click="getNewsByCategory(category.id)">{{category.name}}</b-dropdown-item>
                   </b-dropdown>
                   <li v-if="canLogin" class="nav-item">
                       <router-link :to="{name: 'Login'}" tag="a" class="nav-link" :class="{active: this.$router.currentRoute.name === 'Login'}">Login</router-link>
                   </li>
-                  <li v-if="canLogout" class="nav-item">
-                      <router-link :to="{name: 'CreateNews'}" tag="a" class="nav-link" :class="{active: this.$router.currentRoute.name === 'CreateNews'}">News CMS</router-link>
-                  </li>
-                  <li  v-if="canLogout" class="nav-item">
-                      <router-link :to="{name: 'CreateCategory'}" tag="a" class="nav-link" :class="{active: this.$router.currentRoute.name === 'CreateCategory'}">Category CMS</router-link>
-                  </li>
-                  <li v-if="isAdmin" class="nav-item">
-                      <router-link :to="{name: 'CreateUser'}" tag="a" class="nav-link" :class="{active: this.$router.currentRoute.name === 'CreateUser'}">User CMS</router-link>
-                  </li>
+                  <b-dropdown v-if="canLogout" text="CMS" variant="secondary" class="e-auto mb-2 mb-lg-0" style="height: 35px; margin-top: 5px">
+                      <b-dropdown-item>
+                          <router-link :to="{name: 'CreateNews'}" tag="a" class="nav-link" :class="{active: this.$router.currentRoute.name === 'CreateNews'}">NEWS</router-link>
+                      </b-dropdown-item>
+                      <b-dropdown-item>
+                          <router-link :to="{name: 'CreateCategory'}" tag="a" class="nav-link" :class="{active: this.$router.currentRoute.name === 'CreateCategory'}">CATEGORIES</router-link>
+                      </b-dropdown-item>
+                      <b-dropdown-item v-if="isAdmin">
+                          <router-link :to="{name: 'CreateUser'}" tag="a" class="nav-link" :class="{active: this.$router.currentRoute.name === 'CreateUser'}">USERS</router-link>
+                      </b-dropdown-item>
+                  </b-dropdown>
+<!--                  <li v-if="canLogout" class="nav-item">-->
+<!--                      <router-link :to="{name: 'CreateNews'}" tag="a" class="nav-link" :class="{active: this.$router.currentRoute.name === 'CreateNews'}">News CMS</router-link>-->
+<!--                  </li>-->
+<!--                  <li  v-if="canLogout" class="nav-item">-->
+<!--                      <router-link :to="{name: 'CreateCategory'}" tag="a" class="nav-link" :class="{active: this.$router.currentRoute.name === 'CreateCategory'}">Category CMS</router-link>-->
+<!--                  </li>-->
+<!--                  <li v-if="isAdmin" class="nav-item">-->
+<!--                      <router-link :to="{name: 'CreateUser'}" tag="a" class="nav-link" :class="{active: this.$router.currentRoute.name === 'CreateUser'}">User CMS</router-link>-->
+<!--                  </li>-->
                 </ul>
                 <form v-if="canLogout" class="d-flex" @submit.prevent="logout">
                     <button class="btn btn-outline-secondary" type="submit">Logout</button>
